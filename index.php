@@ -26,7 +26,8 @@
 use core\report_helper;
 
 require('../../config.php');
-require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+//require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+require_once($CFG->dirroot.'/report/grouptool/lib.php');
 
 $id = required_param('id', PARAM_INT);   // Course.
 
@@ -38,8 +39,6 @@ $url = '/report/grouptool/index.php';
 $PAGE->set_url($url,['id' => $id]);
 $PAGE->set_pagelayout('report');
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
-
-$url = '/report/grouptool/index.php';
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'report_grouptool'));
