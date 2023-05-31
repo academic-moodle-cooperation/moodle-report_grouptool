@@ -24,11 +24,11 @@
  */
 
 use core\report_helper;
-
+global $CFG, $DB, $PAGE, $OUTPUT;
 require('../../config.php');
-//require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+ // require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
-require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
+ // require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // Course.
 
@@ -37,7 +37,7 @@ $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 require_course_login($course);
 $coursecontext = context_course::instance($course->id);
 $url = '/report/grouptool/index.php';
-$PAGE->set_url($url,['id' => $id]);
+$PAGE->set_url($url, ['id' => $id]);
 $PAGE->set_pagelayout('report');
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
 if (!$grouptools = get_all_instances_in_course('grouptool', $course)) {
