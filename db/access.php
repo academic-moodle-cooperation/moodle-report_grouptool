@@ -1,5 +1,5 @@
 <?php
-// This file is part of report_grouptool for Moodle - http://moodle.org/
+// This file is part of mod_grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Capability definitions for report_grouptool
  *
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package   report_grouptool
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-//require_once($CFG->dirroot.'/report/grouptool/lib.php');
-class report_grouptool{
-/**
-* view overview tab
-*
-* @throws coding_exception
-* @throws dml_exception
-* @throws moodle_exception
-* @throws required_capability_exception
-*/
 
-}
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = [
+
+    'report/grouptool:view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
+    ],
+
+];
+

@@ -28,6 +28,7 @@ use core\report_helper;
 require('../../config.php');
 //require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
+require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // Course.
 
@@ -39,9 +40,14 @@ $url = '/report/grouptool/index.php';
 $PAGE->set_url($url,['id' => $id]);
 $PAGE->set_pagelayout('report');
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
-
+if (!$grouptools = get_all_instances_in_course('grouptool', $course)) {
+    notice(get_string('nogrouptools', 'report_grouptool'), new moodle_url('/course/view.php', ['id' => $course->id]));
+}
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'report_grouptool'));
-echo 'Please Work';
+report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'));
+foreach ($grouptools as $grouptool){
+    //$grouptool->view_userlist();
+    echo "Hier könnte ein Table stehen";
+}
 echo $OUTPUT->footer();
 
