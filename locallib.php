@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO new Download
+# TODO Fix Ranking
+
+
 /**
  *
  * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -240,8 +244,7 @@ class report_grouptool{
     public function get_active_groups($includeregs=false, $includequeues=false, $agrpid=0, $groupid=0, $groupingid=0,
                                       $indexbygroup=true, $includeinactive = false, $ignoregtinstance = false) {
         global $DB;
-
-        require_capability('mod/grouptool:view_groups', $this->context);
+        //require_capability('report/grouptool:view_groups', $this->context);
 
         if (!$ignoregtinstance) {
             $params = ['grouptoolid' => $this->cm->instance];
@@ -269,7 +272,7 @@ class report_grouptool{
             if (false) {
                 $sizesql = " ".$this->grouptool->grpsize." grpsize,";
             } else {
-                $grouptoolgrpsize = get_config('mod_grouptool', 'grpsize');
+                $grouptoolgrpsize = get_config('report_grouptool', 'grpsize');
                 $grpsize = (!empty($this->grouptool->grpsize) ? $this->grouptool->grpsize : $grouptoolgrpsize);
                 if (empty($grpsize)) {
                     $grpsize = 3;
@@ -379,14 +382,14 @@ class report_grouptool{
         global $OUTPUT, $CFG, $DB, $PAGE, $SESSION;
         $useridentityfields = self::get_useridentity_fields();
 
-        if (!isset($SESSION->mod_grouptool->userlist)) {
-            $SESSION->mod_grouptool->userlist = new stdClass();
+        if (!isset($SESSION->report_grouptool->userlist)) {
+            $SESSION->report_grouptool->userlist = new stdClass();
         }
         // Handles order direction!
-        if (!isset($SESSION->mod_grouptool->userlist->orderby)) {
-            $SESSION->mod_grouptool->userlist->orderby = [];
+        if (!isset($SESSION->report_grouptool->userlist->orderby)) {
+            $SESSION->report_grouptool->userlist->orderby = [];
         }
-        $orderby = $SESSION->mod_grouptool->userlist->orderby;
+        $orderby = $SESSION->report_grouptool->userlist->orderby;
         if ($tsort = optional_param('tsort', 0, PARAM_ALPHANUM)) {
             $olddir = 'DESC';
             if (key_exists($tsort, $orderby)) {
@@ -399,19 +402,19 @@ class report_grouptool{
             array_unshift($oldorderby, $tsort);
             array_unshift($oldorderdir, (($olddir == 'DESC') ? 'ASC' : 'DESC'));
             $orderby = array_combine($oldorderby, $oldorderdir);
-            $SESSION->mod_grouptool->userlist->orderby = $orderby;
+            $SESSION->report_grouptool->userlist->orderby = $orderby;
         }
 
         // Handles collapsed columns!
-        if (!isset($SESSION->mod_grouptool->userlist->collapsed)) {
-            $SESSION->mod_grouptool->userlist->collapsed = [];
+        if (!isset($SESSION->report_grouptool->userlist->collapsed)) {
+            $SESSION->report_grouptool->userlist->collapsed = [];
         }
-        $collapsed = $SESSION->mod_grouptool->userlist->collapsed;
+        $collapsed = $SESSION->report_grouptool->userlist->collapsed;
         if ($thide = optional_param('thide', 0, PARAM_ALPHANUM)) {
             if (!in_array($thide, $collapsed)) {
                 array_push($collapsed, $thide);
             }
-            $SESSION->mod_grouptool->userlist->collapsed = $collapsed;
+            $SESSION->report_grouptool->userlist->collapsed = $collapsed;
         }
         if ($tshow = optional_param('tshow', 0, PARAM_ALPHANUM)) {
             foreach ($collapsed as $key => $value) {
@@ -419,7 +422,7 @@ class report_grouptool{
                     unset($collapsed[$key]);
                 }
             }
-            $SESSION->mod_grouptool->userlist->collapsed = $collapsed;
+            $SESSION->report_grouptool->userlist->collapsed = $collapsed;
         }
 
         $downloadurl = '';
@@ -665,6 +668,8 @@ class report_grouptool{
                     } else {
                         $this->print_empty_cell();
                     }
+                    # TODO Remove Following Line
+                    echo("<script>console.log('PHP Testing (Anne): " . "Pleasse" . "');</script>");
                     if (!in_array('queues', $collapsed)) {
                         if (!empty($user->queued)) {
                             $queueentries = [];
@@ -675,6 +680,8 @@ class report_grouptool{
                                 ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
+                                # TODO Remove Following Line
+                                echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
                                 $rank = $this->get_rank_in_queue($groupdata->queued, $user->id);
                                 $groupdata = null;
                                 unset($groupdata);
@@ -974,6 +981,46 @@ class report_grouptool{
         }
 
         return "";
+    }
+    /**
+     * returns rank in queue for a particular user
+     * if $data is an array uses array (like queue/reg-info returned by {@see get_active_groups()})
+     * to determin rank otherwise if $data is an integer uses DB-query to get queue rank in
+     * active group with id == $data
+     *
+     * @param int[]|int $data array with regs/queues for a group like returned by get_active_groups() or agrpid
+     * @param int $userid user for whom data should be returned
+     * @return int rank in queue/registration (registration only via $data-array)
+     * @throws dml_exception
+     */
+    private function get_rank_in_queue($data=0, $userid=0) {
+        global $DB, $USER;
+
+        if (is_array($data)) { // It's the queue itself!
+            uasort($data, [$this, "cmptimestamp"]);
+            $i = 1;
+            foreach ($data as $entry) {
+                if ($entry->userid == $userid) {
+                    return $i;
+                } else {
+                    $i++;
+                }
+            }
+            return false;
+        } else if (!empty($data)) { // It's an active-group-id, so we gotta get the queue data!
+            $params = [
+                'agrpid' => $data,
+                'userid' => !empty($userid) ? $userid : $USER->id
+            ];
+            $sql = "SELECT count(b.id) AS rank
+                      FROM {grouptool_queued} a
+                INNER JOIN {grouptool_queued} b ON b.timestamp <= a.timestamp
+                     WHERE a.agrpid = :agrpid AND a.userid = :userid";
+        } else {
+            return null;
+        }
+
+        return $DB->count_records_sql($sql, $params);
     }
 
 

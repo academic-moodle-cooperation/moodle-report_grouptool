@@ -28,25 +28,32 @@ global $CFG, $DB, $PAGE, $OUTPUT;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
- // require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
-
+# TODO remove warnings
+# TODO use capability
 $id = required_param('id', PARAM_INT);   // Course.
 
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 
 require_course_login($course);
+
 $coursecontext = context_course::instance($course->id);
 $url = '/report/grouptool/index.php';
 $PAGE->set_url($url, ['id' => $id]);
 $PAGE->set_pagelayout('report');
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
+
 if (!$grouptools = get_all_instances_in_course('grouptool', $course)) {
     notice(get_string('nogrouptools', 'report_grouptool'), new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 echo $OUTPUT->header();
 report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'));
+
 foreach ($grouptools as $grouptool){
-    $report = new report_grouptool($id,$grouptool,null,$coursecontext);
+    if (!isset($SESSION->report_grouptool)) {
+        $SESSION->report_grouptool = new stdClass();
+    }
+    $report = new report_grouptool($grouptool->coursemodule,$grouptool,null,$coursecontext);
+    echo $OUTPUT->heading(format_string($grouptool->name));
     $report->view_userlist();
 }
 echo $OUTPUT->footer();
