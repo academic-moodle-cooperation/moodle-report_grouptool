@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO new Download
-# TODO Fix Ranking
+// TODO new Download
+// TODO Fix Ranking
 
 
 /**
@@ -333,14 +333,29 @@ class report_grouptool{
                     $groupdata[$key]->classes = '';
                 }
             }
-
+            // TODO ANNE
+            // TODO remove comment
+            /*
             if ((!empty($this->grouptool->use_size))
-                || ($this->grouptool->use_queue && $includequeues)
+                || ($includequeues)
+                || ($includeregs)) {
+            */
+            if ((!empty($this->grouptool->use_size))
                 || ($includeregs)) {
                 $keys = array_keys($groupdata);
                 foreach ($keys as $key) {
                     $groupdata[$key]->queued = null;
+
+                    // TODO ANNE
+                    // TODO remove comment
+                    /*
                     if ($includequeues && $this->grouptool->use_queue) {
+                        $attr = ['agrpid' => $groupdata[$key]->agrpid];
+                        $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
+                    }
+                   */
+
+                    if ($includequeues) {
                         $attr = ['agrpid' => $groupdata[$key]->agrpid];
                         $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
                     }
@@ -668,8 +683,8 @@ class report_grouptool{
                     } else {
                         $this->print_empty_cell();
                     }
-                    # TODO Remove Following Line
-                    echo("<script>console.log('PHP Testing (Anne): " . "Pleasse" . "');</script>");
+                    // TODO Remove Following Line ANNE
+                    //echo("<script>console.log('PHP Testing (Anne): " . "Pleasse" . "');</script>");
                     if (!in_array('queues', $collapsed)) {
                         if (!empty($user->queued)) {
                             $queueentries = [];
@@ -680,8 +695,8 @@ class report_grouptool{
                                 ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
-                                # TODO Remove Following Line
-                                echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
+                                // TODO Remove Following Line ANNE
+                                //echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
                                 $rank = $this->get_rank_in_queue($groupdata->queued, $user->id);
                                 $groupdata = null;
                                 unset($groupdata);

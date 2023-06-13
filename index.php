@@ -28,7 +28,7 @@ global $CFG, $DB, $PAGE, $OUTPUT;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
-# TODO remove warnings
+# TODO Fix warnings
 # TODO use capability
 $id = required_param('id', PARAM_INT);   // Course.
 
@@ -48,10 +48,11 @@ if (!$grouptools = get_all_instances_in_course('grouptool', $course)) {
 echo $OUTPUT->header();
 report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'));
 
+if (!isset($SESSION->report_grouptool)) {
+    $SESSION->report_grouptool = new stdClass();
+}
+
 foreach ($grouptools as $grouptool){
-    if (!isset($SESSION->report_grouptool)) {
-        $SESSION->report_grouptool = new stdClass();
-    }
     $report = new report_grouptool($grouptool->coursemodule,$grouptool,null,$coursecontext);
     echo $OUTPUT->heading(format_string($grouptool->name));
     $report->view_userlist();
