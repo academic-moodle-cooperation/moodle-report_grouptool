@@ -23,7 +23,7 @@ variables:
   script:
    - moodle-plugin-ci phplint
    - moodle-plugin-ci phpcpd
-   #    - moodle-plugin-ci phpmd
+   - moodle-plugin-ci phpmd
    #    - moodle-plugin-ci codechecker
    #    - moodle-plugin-ci validate
    #    - moodle-plugin-ci savepoints
