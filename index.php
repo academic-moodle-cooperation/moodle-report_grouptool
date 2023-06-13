@@ -28,8 +28,8 @@ global $CFG, $DB, $PAGE, $OUTPUT;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
-# TODO Fix warnings
-# TODO use capability
+// TODO Fix warnings
+// TODO use capability
 $id = required_param('id', PARAM_INT);   // Course.
 
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
@@ -53,7 +53,7 @@ if (!isset($SESSION->report_grouptool)) {
 }
 
 foreach ($grouptools as $grouptool){
-    $report = new report_grouptool($grouptool->coursemodule, $grouptool,null, $coursecontext);
+    $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $coursecontext);
     echo $OUTPUT->heading(format_string($grouptool->name));
     $report->view_userlist();
 }

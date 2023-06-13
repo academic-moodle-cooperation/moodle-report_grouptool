@@ -24,9 +24,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-//require_once($CFG->dirroot.'/report/grouptool/lib.php');
+// require_once($CFG->dirroot.'/report/grouptool/lib.php');
 
-class report_grouptool{
+class report_grouptool {
 
     /** @var object */
     protected $cm;
@@ -89,8 +89,7 @@ class report_grouptool{
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public function __construct($cmid, $grouptool=null, $cm=null, $course=null)
-    {
+    public function __construct($cmid, $grouptool=null, $cm=null, $course=null) {
         global $DB;
 
         if ($cmid == 'staticonly') {
@@ -244,7 +243,7 @@ class report_grouptool{
     public function get_active_groups($includeregs=false, $includequeues=false, $agrpid=0, $groupid=0, $groupingid=0,
                                       $indexbygroup=true, $includeinactive = false, $ignoregtinstance = false) {
         global $DB;
-        //require_capability('report/grouptool:view_groups', $this->context);
+        // require_capability('report/grouptool:view_groups', $this->context);
 
         if (!$ignoregtinstance) {
             $params = ['grouptoolid' => $this->cm->instance];
@@ -696,7 +695,7 @@ class report_grouptool{
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
                                 // TODO Remove Following Line ANNE
-                                //echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
+                                // echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
                                 $rank = $this->get_rank_in_queue($groupdata->queued, $user->id);
                                 $groupdata = null;
                                 unset($groupdata);
