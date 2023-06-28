@@ -41,7 +41,7 @@ function report_grouptool_extend_navigation_course($navigation, $course, $contex
     $modinfo = get_fast_modinfo($course, -1);
     if (empty($modinfo->instances['grouptool'])) {
         $isthere = $navigation->get(get_string('grouptool', 'report_grouptool'));
-        if( $isthere != false){
+        if ( $isthere != false){
             $isthere->remove();
         }
         return;

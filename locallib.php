@@ -110,13 +110,13 @@ class report_grouptool {
         }
     }
     /**
-         * view userlist tab
-         *
-         * @throws coding_exception
-         * @throws dml_exception
-         * @throws moodle_exception
-         * @throws required_capability_exception
-         */
+     * view userlist tab
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
     public function view_userlist() {
         global $PAGE, $OUTPUT;
 
@@ -134,9 +134,9 @@ class report_grouptool {
         $groupings = groups_get_all_groupings($this->course->id);
         $options = [0 => get_string('all')];
         if (count($groupings)) {
-             foreach ($groupings as $grouping) {
-                 $options[$grouping->id] = $grouping->name;
-             }
+            foreach ($groupings as $grouping) {
+                $options[$grouping->id] = $grouping->name;
+            }
         }
         flush();
         $this->userlist_table($groupingid, $groupid);
@@ -152,7 +152,7 @@ class report_grouptool {
      * @throws dml_exception
      * @throws required_capability_exception
      */
-    protected function get_paramter_dropdowns($url, $groupingid, $groupid, $orientation){
+    protected function get_paramter_dropdowns ($url, $groupingid, $groupid, $orientation){
 
         $groupingselect = $this->get_grouping_select($url, $groupingid);
         $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
