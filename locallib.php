@@ -152,7 +152,7 @@ class report_grouptool {
      * @throws dml_exception
      * @throws required_capability_exception
      */
-    protected function get_paramter_dropdowns ($url, $groupingid, $groupid, $orientation){
+    protected function get_paramter_dropdowns($url, $groupingid, $groupid, $orientation) {
 
         $groupingselect = $this->get_grouping_select($url, $groupingid);
         $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
