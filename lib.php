@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-//require_once($CFG->dirroot.'/report/grouptool/lib.php');
+// require_once($CFG->dirroot.'/report/grouptool/lib.php');
 
 /**
  * This function extends the navigation with the report items
@@ -32,7 +32,21 @@ defined('MOODLE_INTERNAL') || die();
  * @param context         $context    The context of the course
  */
 function report_grouptool_extend_navigation_course($navigation, $course, $context) {
-    // Only let users with the appropriate capability see this settings item.
+    global $PAGE, $OUTPUT, $USER;
+    // TODO Only let users with the appropriate capability see this settings item.
+    // if (!has_capability('report/grouptool:view', context_course::instance($course->id), $USER->id)) {
+    // echo "WHAT";
+    // return;
+    // }
+    $modinfo = get_fast_modinfo($course, -1);
+    if (empty($modinfo->instances['grouptool'])) {
+        $isthere = $navigation->get(get_string('grouptool', 'report_grouptool'));
+        if ( $isthere != false) {
+            $isthere->remove();
+        }
+        return;
+    }
+
     $url = new moodle_url('/report/grouptool/index.php', ['id' => $course->id]);
     $node = navigation_node::create(get_string('grouptool', 'report_grouptool'), $url, navigation_node::TYPE_SETTING,
         null, null, new pix_icon('i/report', get_string('grouptool', 'report_grouptool')));
