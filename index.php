@@ -53,7 +53,7 @@ if (!isset($SESSION->report_grouptool)) {
 }
 
 foreach ($grouptools as $grouptool){
-    $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $coursecontext);
+    $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
     echo $OUTPUT->heading(format_string($grouptool->name));
     $report->view_userlist();
 }

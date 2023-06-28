@@ -47,7 +47,7 @@ function report_grouptool_extend_navigation_course($navigation, $course, $contex
         return;
     }
 
-    $url = new moodle_url('#    /report/grouptool/index.php', ['id' => $course->id]);
+    $url = new moodle_url('/report/grouptool/index.php', ['id' => $course->id]);
     $node = navigation_node::create(get_string('grouptool', 'report_grouptool'), $url, navigation_node::TYPE_SETTING,
         null, null, new pix_icon('i/report', get_string('grouptool', 'report_grouptool')));
     $navigation->add_node($node);
