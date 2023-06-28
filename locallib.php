@@ -139,22 +139,37 @@ class report_grouptool {
                 }
             }
 
-            $groupingselect = $this->get_grouping_select($url, $groupingid);
-            $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
-            $orientationselect = $this->get_orientation_select($url, $orientation);
 
-            echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
-                    $OUTPUT->render($groupingselect),
-                    ['class' => 'centered grouptool_userlist_filter']).
-                html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
-                    $OUTPUT->render($groupselect),
-                    ['class' => 'centered grouptool_userlist_filter']).
-                html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
-                    $OUTPUT->render($orientationselect),
-                    ['class' => 'centered grouptool_userlist_filter']);
             flush();
             $this->userlist_table($groupingid, $groupid);
         }
+    /**
+     * Retunrs Dropdown Menus to select the paramters for download
+     * @param $url
+     * @param $groupingid
+     * @param $groupid
+     * @param $orientation
+     * @return void
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws required_capability_exception
+     */
+    protected function get_paramter_dropdowns($url,$groupingid,$groupid,$orientation){
+
+        $groupingselect = $this->get_grouping_select($url, $groupingid);
+        $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
+        $orientationselect = $this->get_orientation_select($url, $orientation);
+
+        echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
+                $OUTPUT->render($groupingselect),
+                ['class' => 'centered grouptool_userlist_filter']).
+            html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
+                $OUTPUT->render($groupselect),
+                ['class' => 'centered grouptool_userlist_filter']).
+            html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
+                $OUTPUT->render($orientationselect),
+                ['class' => 'centered grouptool_userlist_filter']);
+    }
     /**
      * Returns a single select to change currently selected grouping.
      *
@@ -332,13 +347,11 @@ class report_grouptool {
                     $groupdata[$key]->classes = '';
                 }
             }
-            // TODO ANNE
             // TODO remove comment
-            /*
-            if ((!empty($this->grouptool->use_size))
-                || ($includequeues)
-                || ($includeregs)) {
-            */
+            // if ((!empty($this->grouptool->use_size))
+            //    || ($includequeues)
+            //    || ($includeregs)) {
+            //
             if ((!empty($this->grouptool->use_size))
                 || ($includeregs)) {
                 $keys = array_keys($groupdata);
@@ -443,20 +456,20 @@ class report_grouptool {
         if (!$onlydata) {
             flush();
             $orientation = optional_param('orientation', 0, PARAM_BOOL);
-            $downloadurl = new moodle_url('/mod/grouptool/download.php',
+            $downloadurl = new moodle_url('/report/grouptool/download.php',
                 [
                     'id'          => $this->cm->id,
                     'groupingid'  => $groupingid,
                     'groupid'     => $groupid,
                     'orientation' => $orientation,
-                    'sesskey'     => sesskey(),
-                    'tab'         => 'userlist'
+                    'sesskey'     => sesskey()
                 ]);
         }
 
         // Get all ppl that are allowed to register!
-        list($esql, $params) = get_enrolled_sql($this->context, 'mod/grouptool:register');
-
+        // TODO use capability
+        // list($esql, $params) = get_enrolled_sql($this->context, 'report/grouptool:register');
+        list($esql, $params) = get_enrolled_sql($this->context);
         $sql = "SELECT u.id
                   FROM {user} u
              LEFT JOIN ($esql) eu ON eu.id=u.id
@@ -523,7 +536,7 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            echo $this->get_download_links($downloadurl);
+            // echo $this->get_download_links($downloadurl);
             flush();
         }
 
@@ -682,8 +695,6 @@ class report_grouptool {
                     } else {
                         $this->print_empty_cell();
                     }
-                    // TODO Remove Following Line ANNE
-                    //echo("<script>console.log('PHP Testing (Anne): " . "Pleasse" . "');</script>");
                     if (!in_array('queues', $collapsed)) {
                         if (!empty($user->queued)) {
                             $queueentries = [];
@@ -694,8 +705,6 @@ class report_grouptool {
                                 ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
-                                // TODO Remove Following Line ANNE
-                                // echo("<script>console.log('PHP Testing (Anne): " . $groupdata->queued . "');</script>");
                                 $rank = $this->get_rank_in_queue($groupdata->queued, $user->id);
                                 $groupdata = null;
                                 unset($groupdata);
@@ -830,7 +839,8 @@ class report_grouptool {
      * @throws moodle_exception
      */
     protected function get_download_links($downloadurl, $groupid = 0) {
-        if (has_capability('mod/grouptool:export', $this->context)) {
+        // TODO Use capability
+        if (true | has_capability('report/grouptool:export', $this->context)) {
             $class = 'download';
             if ($groupid) {
                 $downloadurl = new moodle_url($downloadurl, ['groupid' => $groupid]);

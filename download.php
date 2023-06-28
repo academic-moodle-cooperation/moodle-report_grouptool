@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_grouptool for Moodle - http://moodle.org/
+// This file is part of report_grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 /**
  * Handles download of userview and course overview in various formats
  *
- * @package   mod_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package   report_grouptool
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ $context = context_module::instance($cmid);
 $PAGE->set_context($context);
 $url = new moodle_url($CFG->wwwroot.'/report/grouptool/download.php', ['id' => $cmid]);
 $PAGE->set_url($url);
-$instance = new mod_grouptool($cmid);
+$instance = new report_grouptool($cmid);
 
 require_login($cm->course, true, $cm);
 require_capability('reort/grouptool:export', $context);
@@ -84,42 +84,19 @@ switch ($format) {
         $readableformat = 'unknown';
 }
 
-/* Trigger the log event before delivering the download! */
-switch ($tab) {
-    case 'overview':
-        require_capability('report/grouptool:view_regs_group_view', $context);
-        // Trigger overview event.
-        $event = \mod_grouptool\event\overview_exported::create([
-                'objectid' => $cm->instance,
-                'context'  => context_module::instance($cm->id),
-                'other'    => [
-                'tab' => $tab,
-                'format_readable' => $readableformat,
-                'format' => $format,
-                'groupid' => $groupid,
-                'groupingid' => $groupingid,
-                ],
-        ]);
-        $event->trigger();
-    break;
-    case 'userlist':
-        require_capability('report/grouptool:view_regs_course_view', $context);
-        // Trigger userlist event.
-        $event = \mod_grouptool\event\userlist_exported::create([
-                'objectid' => $cm->instance,
-                'context'  => context_module::instance($cm->id),
-                'other'    => [
-                'tab' => $tab,
-                'format_readable' => $readableformat,
-                'format' => $format,
-                'groupid' => $groupid,
-                'groupingid' => $groupingid,
-                ],
-        ]);
-        $event->trigger();
-    break;
-}
-
+require_capability('report/grouptool:view_regs_course_view', $context);
+// Trigger userlist event.
+$event = \mod_grouptool\event\userlist_exported::create([
+    'objectid' => $cm->instance,
+    'context'  => context_module::instance($cm->id),
+    'other'    => [
+        'format_readable' => $readableformat,
+        'format' => $format,
+        'groupid' => $groupid,
+        'groupingid' => $groupingid,
+    ],
+]);
+$event->trigger();
 switch ($format) {
     case GROUPTOOL_PDF:
         $PAGE->url->param('format', GROUPTOOL_PDF);
