@@ -36,6 +36,46 @@ $capabilities = [
             'manager' => CAP_ALLOW
         ]
     ],
+    'report/grouptool:export' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
+    ],
+
+    'report/grouptool:view_groups' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
+    ],
+
+    'report/grouptool:view_regs_group_view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
+    ],
+
+    'report/grouptool:view_regs_course_view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
+    ]
 
 ];
 
