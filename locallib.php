@@ -109,7 +109,7 @@ class report_grouptool {
             print_error('invalidid', 'grouptool');
         }
     }
-        /**
+    /**
          * view userlist tab
          *
          * @throws coding_exception
@@ -117,32 +117,30 @@ class report_grouptool {
          * @throws moodle_exception
          * @throws required_capability_exception
          */
-        public function view_userlist() {
-            global $PAGE, $OUTPUT;
+    public function view_userlist() {
+        global $PAGE, $OUTPUT;
 
-            $groupid = optional_param('groupid', 0, PARAM_INT);
-            $groupingid = optional_param('groupingid', 0, PARAM_INT);
-            $orientation = optional_param('orientation', 0, PARAM_BOOL);
+        $groupid = optional_param('groupid', 0, PARAM_INT);
+        $groupingid = optional_param('groupingid', 0, PARAM_INT);
+        $orientation = optional_param('orientation', 0, PARAM_BOOL);
 
-            $url = new moodle_url($PAGE->url, [
-                'sesskey'     => sesskey(),
-                'groupid'     => $groupid,
-                'groupingid'  => $groupingid,
-                'orientation' => $orientation
-            ]);
+        $url = new moodle_url($PAGE->url, [
+            'sesskey'     => sesskey(),
+            'groupid'     => $groupid,
+            'groupingid'  => $groupingid,
+            'orientation' => $orientation
+        ]);
 
-            $groupings = groups_get_all_groupings($this->course->id);
-            $options = [0 => get_string('all')];
-            if (count($groupings)) {
-                foreach ($groupings as $grouping) {
-                    $options[$grouping->id] = $grouping->name;
-                }
-            }
-
-
-            flush();
-            $this->userlist_table($groupingid, $groupid);
+        $groupings = groups_get_all_groupings($this->course->id);
+        $options = [0 => get_string('all')];
+        if (count($groupings)) {
+             foreach ($groupings as $grouping) {
+                 $options[$grouping->id] = $grouping->name;
+             }
         }
+        flush();
+        $this->userlist_table($groupingid, $groupid);
+    }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
      * @param $url
@@ -154,7 +152,7 @@ class report_grouptool {
      * @throws dml_exception
      * @throws required_capability_exception
      */
-    protected function get_paramter_dropdowns($url,$groupingid,$groupid,$orientation){
+    protected function get_paramter_dropdowns($url, $groupingid, $groupid, $orientation){
 
         $groupingselect = $this->get_grouping_select($url, $groupingid);
         $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
@@ -349,9 +347,9 @@ class report_grouptool {
             }
             // TODO remove comment
             // if ((!empty($this->grouptool->use_size))
-            //    || ($includequeues)
-            //    || ($includeregs)) {
-            //
+            // || ($includequeues)
+            // || ($includeregs)) {
+
             if ((!empty($this->grouptool->use_size))
                 || ($includeregs)) {
                 $keys = array_keys($groupdata);
@@ -360,12 +358,10 @@ class report_grouptool {
 
                     // TODO ANNE
                     // TODO remove comment
-                    /*
-                    if ($includequeues && $this->grouptool->use_queue) {
-                        $attr = ['agrpid' => $groupdata[$key]->agrpid];
-                        $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
-                    }
-                   */
+                    // if ($includequeues && $this->grouptool->use_queue) {
+                    // $attr = ['agrpid' => $groupdata[$key]->agrpid];
+                    // $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
+                    // }
 
                     if ($includequeues) {
                         $attr = ['agrpid' => $groupdata[$key]->agrpid];

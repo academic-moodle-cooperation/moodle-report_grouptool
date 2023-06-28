@@ -24,7 +24,6 @@
  */
 
 use core\report_helper;
-global $CFG, $DB, $PAGE, $OUTPUT;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
@@ -52,7 +51,7 @@ if (!isset($SESSION->report_grouptool)) {
     $SESSION->report_grouptool = new stdClass();
 }
 
-foreach ($grouptools as $grouptool){
+foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
     echo $OUTPUT->heading(format_string($grouptool->name));
     $report->view_userlist();
