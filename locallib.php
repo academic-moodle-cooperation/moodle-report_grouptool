@@ -345,12 +345,9 @@ class report_grouptool {
                     $groupdata[$key]->classes = '';
                 }
             }
-
-             if ((!empty($this->grouptool->use_size))
-             || ($includequeues)
-             || ($includeregs)) {
-
-
+            if ((!empty($this->grouptool->use_size))
+                || ($includequeues)
+                || ($includeregs)) {
                 $keys = array_keys($groupdata);
                 foreach ($keys as $key) {
                     $groupdata[$key]->queued = null;
