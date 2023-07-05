@@ -345,13 +345,12 @@ class report_grouptool {
                     $groupdata[$key]->classes = '';
                 }
             }
-            // TODO remove comment
-            // if ((!empty($this->grouptool->use_size))
-            // || ($includequeues)
-            // || ($includeregs)) {
 
-            if ((!empty($this->grouptool->use_size))
-                || ($includeregs)) {
+             if ((!empty($this->grouptool->use_size))
+             || ($includequeues)
+             || ($includeregs)) {
+
+
                 $keys = array_keys($groupdata);
                 foreach ($keys as $key) {
                     $groupdata[$key]->queued = null;
@@ -1017,7 +1016,7 @@ class report_grouptool {
         global $DB, $USER;
 
         if (is_array($data)) { // It's the queue itself!
-            uasort($data, [$this, "cmptimestamp"]);
+           // uasort($data, [$this, "cmptimestamp"]);
             $i = 1;
             foreach ($data as $entry) {
                 if ($entry->userid == $userid) {
