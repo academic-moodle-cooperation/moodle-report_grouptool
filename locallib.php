@@ -1013,7 +1013,7 @@ class report_grouptool {
         global $DB, $USER;
 
         if (is_array($data)) { // It's the queue itself!
-           // uasort($data, [$this, "cmptimestamp"]);
+            // uasort($data, [$this, "cmptimestamp"]);
             $i = 1;
             foreach ($data as $entry) {
                 if ($entry->userid == $userid) {
