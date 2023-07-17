@@ -528,7 +528,7 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            // echo $this->get_download_links($downloadurl);
+            echo $this->get_download_links($downloadurl);
             flush();
         }
 
