@@ -448,7 +448,7 @@ class report_grouptool {
         if (!$onlydata) {
             flush();
             $orientation = optional_param('orientation', 0, PARAM_BOOL);
-            $downloadurl = new moodle_url('/report/grouptool/download.php',
+            $downloadurl = new moodle_url('/mod/grouptool/download.php?tab=overview',
                 [
                     'id'          => $this->cm->id,
                     'groupingid'  => $groupingid,

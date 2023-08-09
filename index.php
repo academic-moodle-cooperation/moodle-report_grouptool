@@ -50,18 +50,11 @@ report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'
 if (!isset($SESSION->report_grouptool)) {
     $SESSION->report_grouptool = new stdClass();
 }
-echo $OUTPUT->container_start($classes="accordion",$id="accordionPanel");
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    echo $OUTPUT->container_start($classes="accordion-item");
-    echo $OUTPUT->container_start($classes="accordion-header");
     echo $OUTPUT->heading(format_string($grouptool->name));
-    echo $OUTPUT->container_end();
-    echo $OUTPUT->container_start($classes="accordion-body");
     $report->view_userlist();
-    echo $OUTPUT->container_end();
-    echo $OUTPUT->container_end();
 }
-echo $OUTPUT->container_end();
+
 echo $OUTPUT->footer();
 

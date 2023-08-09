@@ -33,12 +33,12 @@ $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('grouptool', $cmid);
 $context = context_module::instance($cmid);
 $PAGE->set_context($context);
-$url = new moodle_url($CFG->wwwroot.'/report/grouptool/download.php', ['id' => $cmid]);
+$url = new moodle_url($CFG->wwwroot.'/mod/grouptool/download.php', ['id' => $cmid]);
 $PAGE->set_url($url);
 $instance = new grouptool($cmid);
 
-require_login($cm->course, true, $cm);
-require_capability('report/grouptool:export', $context);
+// require_login($cm->course, true, $cm);
+// require_capability('report/grouptool:export', $context);
 
 $groupingid = optional_param('groupingid', 0, PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
