@@ -24,8 +24,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-// require_once($CFG->dirroot.'/report/grouptool/lib.php');
-
+require_once($CFG->dirroot.'/report/grouptool/lib.php');
+require_once($CFG->dirroot.'/mod/grouptool/definitions.php');
+require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/report/grouptool/lib.php');
+require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/grade/grade_grade.php');
+require_once($CFG->libdir.'/pdflib.php');
 class report_grouptool {
 
     /** @var object */
@@ -448,7 +455,8 @@ class report_grouptool {
         if (!$onlydata) {
             flush();
             $orientation = optional_param('orientation', 0, PARAM_BOOL);
-            $downloadurl = new moodle_url('/mod/grouptool/download.php?tab=overview',
+            // TODO use REPORT
+            $downloadurl = new moodle_url('/report/grouptool/download.php?tab=userlist',
                 [
                     'id'          => $this->cm->id,
                     'groupingid'  => $groupingid,
@@ -1038,6 +1046,386 @@ class report_grouptool {
 
         return $DB->count_records_sql($sql, $params);
     }
+    /**
+     * outputs generated pdf-file for overview (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param bool $includeinactive optional include inactive groups too!
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_overview_pdf($groupid=0, $groupingid=0, $includeinactive=false) {
+        $data = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $timeavailable = $this->grouptool->timeavailable;
+        $grouptoolname = $this->grouptool->name;
+        $timedue = $this->grouptool->timedue;
+
+        if (!empty($groupid)) {
+            $viewname = groups_get_group_name($groupid);
+        } else {
+            if (!empty($groupingid)) {
+                $viewname = groups_get_grouping_name($groupingid);
+            } else {
+                $viewname = get_string('all').' '.get_string('groups');
+            }
+        }
+
+        $pdf = new \mod_grouptool\pdf('overview', $coursename, $grouptoolname, $timeavailable, $timedue,
+            $viewname);
+
+        if (count($data) > 0) {
+
+            foreach ($data as $group) {
+                $groupname = $group->name;
+                $groupinfo = get_string('total').' '.$group->total.' / '.
+                    get_string('registered', 'grouptool').' '.$group->registered.' / '.
+                    get_string('queued', 'grouptool').' '.$group->queued.' / '.
+                    get_string('free', 'grouptool').' '.$group->free;
+                $regdata = $group->reg_data;
+                $queuedata = $group->queue_data;
+                $mregdata = isset($group->mreg_data) ? $group->mreg_data : [];
+                $pdf->add_grp_overview($groupname, $groupinfo, $regdata, $queuedata, $mregdata);
+                $pdf->MultiCell(0, $pdf->getLastH(), '', 'B', 'L', false, 1, null, null,
+                    true, 1, true, false, $pdf->getLastH(), 'M', true);
+                $pdf->MultiCell(0, $pdf->getLastH(), '', 'T', 'L', false, 1, null, null,
+                    true, 1, true, false, $pdf->getLastH(), 'M', true);
+            }
+            $pdf->SetFontSize(8);
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('status', 'grouptool'), '', 'L',
+                false, 1, null, null, true, 1, true, false, $pdf->getLastH(),
+                'M', true);
+            foreach (explode("</li>", get_string('status_help', 'grouptool')) as $legendline) {
+                $pdf->MultiCell(0, $pdf->getLastH(), strip_tags($legendline), '', 'L', false, 1,
+                    null, null, true, 1, true, false, $pdf->getLastH(),
+                    'M', true);
+            }
+        } else {
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'grouptool'), 'B',
+                'LRTB', false, 1, null, null, true, 1, true, false,
+                $pdf->getLastH(), 'M', true);
+        }
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('group').' '.get_string('overview', 'grouptool');
+        }
+        $filename = clean_filename("$filename.pdf");
+        $pdf->Output($filename, 'D');
+        exit();
+    }
+
+    /**
+     * returns raw data for overview
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param bool $includeinactive optional include inactive groups too!
+     * @return array|int|string raw data
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_overview_raw($groupid=0, $groupingid=0, $includeinactive=false) {
+        return $this->group_overview_table($groupid, $groupingid, true, $includeinactive);
+    }
+
+    /**
+     * outputs generated txt-file for overview (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param bool $includeinactive optional include inactive groups too!
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_overview_txt($groupid=0, $groupingid=0, $includeinactive=false) {
+        ob_start();
+        $lines = [];
+        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
+        if (count($groups) > 0) {
+            $lines[] = "*** ".get_string('status', 'grouptool')."\n";
+            foreach (explode("</li>", get_string('status_help', 'grouptool')) as $legendline) {
+                $lines[] = "***\t".strip_tags($legendline);
+            }
+            $lines[] = "";
+
+            foreach ($groups as $group) {
+                $lines[] = $group->name;
+                $lines[] = "\t".get_string('total').' '.$group->total." / ".
+                    get_string('registered', 'grouptool').' '.$group->registered." / ".
+                    get_string('queued', 'grouptool').' '.$group->queued." / ".
+                    get_string('free', 'grouptool').' '.$group->free;
+                if (isset($group->mreg_data)) {
+                    $mregs = count($group->mreg_data);
+                } else {
+                    $mregs = 0;
+                }
+                if ($group->registered > 0) {
+                    $lines[] = "\t".get_string('registrations', 'grouptool');
+                    foreach ($group->reg_data as $reg) {
+                        $lines[] = "\t\t".$reg['status']."\t".$reg['name'].
+                            self::get_useridentity_values_for_txt($reg['useridentityvalues']);
+                    }
+                } else if ($mregs == 0) {
+                    $lines[] = "\t\t--".get_string('no_registrations', 'grouptool')."--";
+                }
+                if ($mregs >= 1) {
+                    foreach ($group->mreg_data as $mreg) {
+                        $lines[] = "\t\t?\t".$mreg['name']."\t".
+                            self::get_useridentity_values_for_txt($mreg['useridentityvalues']);
+                    }
+                }
+                if ($group->queued > 0) {
+                    $lines[] = "\t".get_string('queue', 'grouptool');
+                    foreach ($group->queue_data as $queue) {
+                        $lines[] = "\t\t".$queue['rank']."\t".$queue['name']."\t".
+                            self::get_useridentity_values_for_txt($queue['useridentityvalues']);
+                    }
+                } else {
+                    $lines[] = "\t\t--".get_string('nobody_queued', 'grouptool')."--";
+                }
+                $lines[] = "";
+            }
+        } else {
+            $lines[] = get_string('no_data_to_display', 'grouptool');
+        }
+        $filecontent = implode(GROUPTOOL_NL, $lines);
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('group').'_'.get_string('overview', 'grouptool');
+        }
+        $filename = clean_filename("$filename.txt");
+        ob_clean();
+        header('Content-Type: text/plain');
+        header('Content-Length: ' . strlen($filecontent));
+        header('Content-Disposition: attachment; filename="'.str_replace([' ', '"'], ['_', ''], $filename).
+            '"; filename*="'.rawurlencode($filename).'"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Encoding: utf-8');
+        echo $filecontent;
+    }
+    /**
+     * outputs generated ods-file for overview (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param bool $includeinactive optional include inactive groups too!
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_overview_ods($groupid=0, $groupingid=0, $includeinactive=false) {
+        global $CFG;
+
+        require_once($CFG->libdir . "/odslib.class.php");
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('group').' '.get_string('overview', 'grouptool');
+        }
+        $filename = clean_filename("$filename.ods");
+        $workbook = new MoodleODSWorkbook("-");
+
+        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
+
+        $this->overview_fill_workbook($workbook, $groups);
+
+        $workbook->send($filename);
+        $workbook->close();
+    }
+
+    /**
+     * outputs generated xlsx-file for overview (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param bool $includeinactive optional include inactive groups too!
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_overview_xlsx($groupid = 0, $groupingid = 0, $includeinactive=false) {
+        global $CFG;
+
+        require_once($CFG->libdir . "/excellib.class.php");
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+
+        if (!empty($groupid)) {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.
+                get_string('overview', 'grouptool'));
+        } else if (!empty($groupingid)) {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.
+                get_string('overview', 'grouptool'));
+        } else {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                get_string('group').' '.get_string('overview', 'grouptool'));
+        }
+        $filename = clean_filename("$filename.xlsx");
+        $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
+
+        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
+
+        $this->overview_fill_workbook($workbook, $groups);
+
+        $workbook->send($filename);
+        $workbook->close();
+    }
+    /**
+     * outputs generated txt-file for userlist (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_userlist_txt($groupid=0, $groupingid=0) {
+        ob_start();
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+        $useridentityfields = self::get_useridentity_fields();
+
+        $lines = [];
+        $users = $this->userlist_table($groupingid, $groupid, true);
+
+        if (count($users) > 0) {
+            foreach ($users as $key => $user) {
+                if ($key == 0) { // Headline!
+                    $lines[] = get_string('fullname')."\t".
+                        self::get_useridentity_values_for_txt
+                        (self::convert_associative_array_into_nested_index_array(self::get_useridentity_fields())) . "\t" .
+                        get_string('registrations', 'grouptool')."\t".
+                        get_string('queues', 'grouptool')." (".get_string('rank',
+                            'grouptool').")";
+                } else {
+                    $rows = max([1, count($user['registrations']), count($user['queues'])]);
+
+                    for ($i = 0; $i < $rows; $i++) {
+                        $line = "";
+                        if ($i == 0) {
+                            $line = $user['name'];
+                            // Print all activated useridentityvalue infos.
+                            foreach ($useridentityfields as $identifier => $value) {
+                                if (!empty($user[$identifier])) {
+                                    $line .= "\t" . $user[$identifier];
+                                }
+                            }
+                        } else {
+                            $line = "\t\t";
+                        }
+                        if ((count($user['registrations']) == 0) && ($i == 0)) {
+                            $line .= "\t".get_string('no_registrations', 'grouptool');
+                        } else if (key_exists($i, $user['registrations'])) {
+                            $line .= "\t".$user['registrations'][$i];
+                        } else {
+                            $line .= "\t";
+                        }
+                        if ((count($user['queues']) == 0) && ($i == 0)) {
+                            $line .= "\t".get_string('nowhere_queued', 'grouptool');
+                        } else if (key_exists($i, $user['queues'])) {
+                            $line .= "\t".$user['queues'][$i]['name']."(".$user['queues'][$i]['rank'].")";
+                        } else {
+                            $line .= "\t";
+                        }
+                        $lines[] = $line;
+                    }
+                }
+            }
+        } else {
+            $lines[] = get_string('no_data_to_display', 'grouptool');
+        }
+        $filecontent = implode(GROUPTOOL_NL, $lines);
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('userlist', 'grouptool');
+        }
+        $filename = clean_filename("$filename.txt");
+        ob_clean();
+        header('Content-Type: text/plain');
+        header('Content-Length: ' . strlen($filecontent));
+        header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1!
+        header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in past!
+        header('Content-Disposition: attachment; filename="'.str_replace([' ', '"'], ['_', ''], $filename).'";'.
+            ' filename*="'.rawurlencode($filename).'"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Encoding: utf-8');
+        echo $filecontent;
+    }
+    /**
+     * Returns a ready to print string containing all given useridentity values separated by tabstops
+     *
+     * @param array $values array Values that should be separated
+     * @return string
+     */
+    private static function get_useridentity_values_for_txt($values) {
+        $outstring = '';
+        foreach ($values as $value) {
+            $outstring .= "\t".$value['value'];
+        }
+        return $outstring;
+    }
+    /**
+     * Helper function to convert a given associative array into a nested index array so it can be iterated thorough by mustache.
+     *
+     * @param array $inarray Associative array that should be converted ($key => $value)
+     * @return array Nested array in the format [['key' => $key, 'value' => $value]]
+     */
+    public static function convert_associative_array_into_nested_index_array($inarray) {
+        $outarray = [];
+        foreach ($inarray as $key => $value) {
+            $outarray[] = ['key' => $key, 'value' => $value];
+        }
+        return $outarray;
+    }
+
 
 
 
