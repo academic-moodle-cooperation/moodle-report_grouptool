@@ -115,6 +115,16 @@ class report_grouptool {
         } else if (!$this->course = $DB->get_record('course', ['id' => $this->cm->course])) {
             print_error('invalidid', 'grouptool');
         }
+
+        if ($grouptool) {
+            $this->grouptool = $grouptool;
+        } else if (! $this->grouptool = $DB->get_record('grouptool',
+            ['id' => $this->cm->instance])) {
+            print_error('invalidid', 'grouptool');
+        }
+
+        $this->grouptool->cmidnumber = $this->cm->idnumber;
+        $this->grouptool->course   = $this->course->id;
     }
     /**
      * view userlist tab
@@ -1424,6 +1434,410 @@ class report_grouptool {
             $outarray[] = ['key' => $key, 'value' => $value];
         }
         return $outarray;
+    }
+    /**
+     * outputs generated xlsx-file for userlist (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_userlist_xlsx($groupid = 0, $groupingid = 0) {
+        global $CFG;
+
+        require_once($CFG->libdir . "/excellib.class.php");
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+
+        $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
+
+        $data = $this->userlist_table($groupingid, $groupid, true);
+
+        $this->userlist_fill_workbook($workbook, $data);
+
+        if (!empty($groupid)) {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.
+                get_string('userlist', 'grouptool'));
+        } else if (!empty($groupingid)) {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.
+                get_string('userlist', 'grouptool'));
+        } else {
+            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
+                get_string('userlist', 'grouptool'));
+        }
+        $filename = clean_filename("$filename.xlsx");
+
+        $workbook->send($filename);
+        $workbook->close();
+    }
+    /**
+     * fills workbook (either XLSX or ODS) with data
+     *
+     * @param MoodleExcelWorkbook|MoodleODSWorkbook $workbook workbook to put data into
+     * @param stdClass[] $data userdata with headline at index 0
+     * @param string[] $collapsed (optional) currently collapsed columns
+     * @throws coding_exception
+     */
+    protected function userlist_fill_workbook(&$workbook, $data, $collapsed=[]) {
+        global $CFG;
+        $orientation = optional_param('orientation', 0, PARAM_BOOL);
+        if (count($data) > 0) {
+
+            $worksheet = false;
+
+            // Prepare formats!
+            $headlineprop = [
+                'size' => 12,
+                'bold' => 1,
+                'HAlign' => 'center',
+                'bottom' => 2,
+                'VAlign' => 'vcenter'
+            ];
+            $headlineformat = $workbook->add_format($headlineprop);
+            $headlineformat->set_right(1);
+            $headlineformat->set_align('center');
+            $headlineformat->set_align('vcenter');
+            $headlinelast = $workbook->add_format($headlineprop);
+            $headlinelast->set_align('center');
+            $headlinelast->set_align('vcenter');
+            $headlinelast->set_left(1);
+            $headlinenb = $workbook->add_format($headlineprop);
+            $headlinenb->set_align('center');
+            $headlinenb->set_align('vcenter');
+            unset($headlineprop['bottom']);
+            $headlinenbb = $workbook->add_format($headlineprop);
+            $headlinenbb->set_align('center');
+            $headlinenbb->set_align('vcenter');
+
+            $regentryprop = [
+                'size' => 10,
+                'align' => 'left'
+            ];
+            $queueentryprop = $regentryprop;
+            $queueentryprop['italic'] = true;
+            $queueentryprop['color'] = 'grey';
+
+            $regentryformat = $workbook->add_format($regentryprop);
+            $regentryformat->set_right(1);
+            $regentryformat->set_align('vcenter');
+            $regentrylast = $workbook->add_format($regentryprop);
+            $regentrylast->set_align('vcenter');
+            $noregentriesformat = $workbook->add_format($regentryprop);
+            $noregentriesformat->set_align('left');
+            $noregentriesformat->set_align('vcenter');
+            $noregentriesformat->set_right(1);
+            $queueentryformat = $workbook->add_format($queueentryprop);
+            $queueentryformat->set_right(1);
+            $queueentryformat->set_align('vcenter');
+            $queueentrylast = $workbook->add_format($queueentryprop);
+            $queueentrylast->set_align('vcenter');
+            $noqueueentriesformat = $workbook->add_format($queueentryprop);
+            $noqueueentriesformat->set_align('left');
+            $noqueueentriesformat->set_align('vcenter');
+
+            // Start row for groups general sheet!
+            $j = 0;
+
+            // We create a dummy user-object to get the fullname-format!
+            $dummy = new stdClass();
+            $namefields = \core_user\fields::for_name()->get_required_fields();
+            foreach ($namefields as $namefield) {
+                $dummy->$namefield = $namefield;
+            }
+            $fullnameformat = fullname($dummy);
+            // Now get the ones used in fullname in the correct order!
+            $namefields = order_in_string($namefields, $fullnameformat);
+
+            $columnwidth = [
+                0               => 26,
+                'fullname'      => 26,
+                'firstname'     => 20,
+                'surname'       => 20,
+                'email'         => 35,
+                'registrations' => 47,
+                'queues_grp'    => 47,
+                'queues_rank'   => 7.5
+            ]; // Unit: mm!
+
+            foreach ($data as $key => $user) {
+                if ($worksheet === false && count($data) > 1) {
+                    // General information? unused at the moment!
+                    $worksheet = $workbook->add_worksheet(get_string('all'));
+                }
+                if ($key == 0) {
+                    // Headline!
+                    $k = 0;
+                    // First we output every namefield from used by fullname in exact the defined order!
+                    foreach ($namefields as $namefield) {
+                        $worksheet->write_string($j, $k, \core_user\fields::get_display_name($namefield), $headlineformat);
+                        $worksheet->write_blank($j + 1, $k, $headlineformat);
+                        $worksheet->merge_cells($j, $k, $j + 1, $k);
+                        $hidden = in_array($namefield, $collapsed) ? true : false;
+                        $columnwidth[$namefield] = empty($columnwidth[$namefield]) ? $columnwidth[0] : $columnwidth[$namefield];
+                        $worksheet->set_column($k, $k, $columnwidth[$namefield], null, $hidden);
+                        $k++;
+                    }
+                    // ...k = n!
+                    if (!empty($CFG->showuseridentity)) {
+                        $fields = explode(',', $CFG->showuseridentity);
+                        foreach ($fields as $field) {
+                            $worksheet->write_string($j, $k, \core_user\fields::get_display_name($field), $headlineformat);
+                            $worksheet->write_blank($j + 1, $k, $headlineformat);
+                            $hidden = in_array($field, $collapsed) ? true : false;
+                            $columnwidth[$field] = empty($columnwidth[$field]) ? $columnwidth[0] : $columnwidth[$field];
+                            $worksheet->set_column($k, $k, $columnwidth[$field], null, $hidden);
+                            $worksheet->merge_cells($j, $k, $j + 1, $k);
+                            $k++; // ...k = n+x!
+                        }
+                    } else {
+                        $worksheet->write_string($j, $k, \core_user\fields::get_display_name('idnumber'), $headlineformat);
+                        $worksheet->write_blank($j + 1, $k, $headlineformat);
+                        $hidden = in_array('idnumber', $collapsed) ? true : false;
+                        $columnwidth['idnumber'] = empty($columnwidth['idnumber']) ? $columnwidth[0] : $columnwidth['idnumber'];
+                        $worksheet->set_column($k, $k, $columnwidth['idnumber'], null, $hidden);
+                        $worksheet->merge_cells($j, $k, $j + 1, $k);
+                        $k++; // ...k = n+1!
+
+                        $worksheet->write_string($j, $k, \core_user\fields::get_display_name('email'), $headlineformat);
+                        $worksheet->write_blank($j + 1, $k, $headlineformat);
+                        $hidden = in_array('email', $collapsed) ? true : false;
+                        $columnwidth['email'] = empty($columnwidth['email']) ? $columnwidth[0] : $columnwidth['email'];
+                        $worksheet->set_column($k, $k, $columnwidth['email'], null, $hidden);
+                        $worksheet->merge_cells($j, $k, $j + 1, $k);
+                        $k++; // ...k = n+2!
+                    }
+                    $worksheet->write_string($j, $k, $user['registrations'], $headlineformat);
+                    $worksheet->write_blank($j + 1, $k, $headlineformat);
+                    $hidden = in_array('registrations', $collapsed) ? true : false;
+                    $tmp = $columnwidth['registrations'];
+                    $columnwidth['registrations'] = empty($tmp) ? $columnwidth[0] : $tmp;
+                    unset($tmp);
+                    $worksheet->set_column($k, $k, $columnwidth['registrations'], null, $hidden);
+                    $worksheet->merge_cells($j, $k, $j + 1, $k);
+                    $k++; // ...k = n+3!
+                    $worksheet->write_string($j, $k, $user['queues'], $headlinenbb);
+                    $worksheet->write_blank($j, $k + 1, $headlinenbb);
+                    $hidden = in_array('queues', $collapsed) ? true : false;
+                    $columnwidth['queues_grp'] = empty($columnwidth['queues_grp']) ? $columnwidth[0] : $columnwidth['queues_grp'];
+                    $worksheet->set_column($k, $k, $columnwidth['queues_grp'], null, $hidden);
+                    $tmp = $columnwidth['queues_rank'];
+                    $columnwidth['queues_rank'] = empty($tmp) ? $columnwidth[0] : $tmp;
+                    unset($tmp);
+                    $worksheet->set_column($k + 1, $k + 1, $columnwidth['queues_rank'], null, $hidden);
+                    $worksheet->merge_cells($j, $k, $j, $k + 1);
+                    $worksheet->write_string($j + 1, $k, get_string('group', 'group'), $headlinenb);
+                    $worksheet->write_string($j + 1, $k + 1, get_string('rank', 'grouptool'),
+                        $headlinelast);
+                    $k += 2; // ...k = n+5!
+                    $rows = 2;
+                } else {
+                    $k = 0;
+                    $rows = max([1, count($user['registrations']), count($user['queues'])]);
+
+                    // First we output every namefield from used by fullname in exact the defined order!
+                    foreach ($namefields as $namefield) {
+                        if (empty($user[$namefield])) {
+                            $user[$namefield] = '';
+                        }
+                        $worksheet->write_string($j, $k, $user[$namefield], $regentryformat);
+                        if ($rows > 1) {
+                            $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
+                        }
+                        $k++;
+                    }
+                    // ...k = n!
+
+                    if (!empty($CFG->showuseridentity)) {
+                        $fields = explode(',', $CFG->showuseridentity);
+                        foreach ($fields as $field) {
+                            if (empty($user[$field])) {
+                                $worksheet->write_blank($j, $k, $regentryformat);
+                            } else {
+                                $worksheet->write_string($j, $k, $user[$field], $regentryformat);
+                            }
+                            if ($rows > 1) {
+                                $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
+                            }
+                            $k++; // ...k = n+x!
+                        }
+                    } else {
+                        $worksheet->write_string($j, $k, $user['idnumber'], $regentryformat);
+                        if ($rows > 1) {
+                            $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
+                        }
+                        $k++; // ...k = n+1!
+
+                        $worksheet->write_string($j, $k, $user['email'], $regentryformat);
+                        if ($rows > 1) {
+                            $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
+                        }
+                        $k++; // ...k = n+2!
+                    }
+
+                    for ($i = 0; $i < $rows; $i++) {
+                        if ($i != 0) {
+                            for ($m = 0; $m < $k; $m++) {
+                                // Write all the empty cells!
+                                $worksheet->write_blank($j + $i, $m, $regentryformat);
+                            }
+                        }
+                        if ((count($user['registrations']) == 0) && ($i == 0)) {
+                            $worksheet->write_string($j, $k, get_string('no_registrations',
+                                'grouptool'),
+                                $noregentriesformat);
+                            if ($rows > 1) {
+                                $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
+                            }
+                        } else if (key_exists($i, $user['registrations'])) {
+                            $worksheet->write_string($j + $i, $k, $user['registrations'][$i],
+                                $regentryformat);
+                        } else {
+                            $worksheet->write_blank($j + $i, $k, $regentryformat);
+                        }
+                        if ((count($user['queues']) == 0) && ($i == 0)) {
+                            $worksheet->write_string($j, $k + 1, get_string('nowhere_queued',
+                                'grouptool'),
+                                $noqueueentriesformat);
+                            $worksheet->merge_cells($j, $k + 1, $j + $rows - 1, $k + 2);
+                        } else if (key_exists($i, $user['queues'])) {
+                            $worksheet->write_string($j + $i, $k + 1, $user['queues'][$i]['name'],
+                                $queueentrylast);
+                            $worksheet->write_number($j + $i, $k + 2, $user['queues'][$i]['rank'],
+                                $queueentrylast);
+                        } else {
+                            $worksheet->write_blank($j + $i, $k + 1, $queueentrylast);
+                            $worksheet->write_blank($j + $i, $k + 2, $queueentrylast);
+                        }
+                    }
+                    $k += 3;
+                }
+                $j += $rows;    // We use 1 row space between groups!
+            }
+        }
+    }
+    /**
+     * outputs generated pdf-file for userlist (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_userlist_pdf($groupid=0, $groupingid=0) {
+        $data = $this->userlist_table($groupingid, $groupid, true);
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $timeavailable = $this->grouptool->timeavailable;
+        $grouptoolname = $this->grouptool->name;
+        $timedue = $this->grouptool->timedue;
+
+        if (!empty($groupingid) || !empty($groupid)) {
+            $viewname = "";
+            if (!empty($groupingid)) {
+                $viewname .= groups_get_grouping_name($groupingid);
+            } else {
+                $viewname .= get_string('all');
+            }
+            if ($viewname != "") {
+                $viewname .= " / ";
+            }
+            if (!empty($groupid)) {
+                $viewname .= groups_get_group_name($groupid);
+            } else {
+                $viewname .= get_string('all');
+            }
+        } else {
+            $viewname = get_string('all').' '.get_string('groups');
+        }
+
+        $pdf = new \report_grouptool\pdf('userlist', $coursename, $grouptoolname, $timeavailable, $timedue,
+            $viewname);
+
+        if (count($data) > 1) {
+            $user = reset($data);
+            $name = $user['name'];
+            $idnumber = $user['idnumber'];
+            $email = $user['email'];
+            $regdata = $user['registrations'];
+            $queuedata = $user['queues'];
+            $pdf->add_userdata($user, true);
+            while (next($data)) {
+                $user = current($data);
+                $name = $user['name'];
+                $idnumber = $user['idnumber'];
+                $email = $user['email'];
+                $regdata = $user['registrations'];
+                $queuedata = $user['queues'];
+                $pdf->add_userdata($user);
+            }
+        } else {
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'grouptool'),
+                'B', 'LRTB', false, 1, null, null, true, 1, true,
+                false, $pdf->getLastH(), 'M', true);
+        }
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('userlist', 'grouptool');
+        }
+        $filename = clean_filename("$filename.pdf");
+
+        $pdf->Output($filename, 'D');
+        exit();
+    }
+    /**
+     * outputs generated ods-file for userlist (forces download)
+     *
+     * @param int $groupid optional get only this group
+     * @param int $groupingid optional get only this grouping
+     * @param string[] $collapsed optional current array with collapsed columns
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function download_userlist_ods($groupid=0, $groupingid=0, $collapsed=[]) {
+        global $CFG;
+
+        require_once($CFG->libdir . "/odslib.class.php");
+
+        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $grouptoolname = $this->grouptool->name;
+
+        $workbook = new MoodleODSWorkbook("-");
+
+        $data = $this->userlist_table($groupingid, $groupid, true);
+
+        $this->userlist_fill_workbook($workbook, $data, $collapsed);
+
+        if (!empty($groupid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+        } else if (!empty($groupingid)) {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+        } else {
+            $filename = $coursename . '_' . $grouptoolname . '_' .
+                get_string('userlist', 'grouptool');
+        }
+        $filename = clean_filename("$filename.ods");
+
+        $workbook->send($filename);
+        $workbook->close();
     }
 
 
