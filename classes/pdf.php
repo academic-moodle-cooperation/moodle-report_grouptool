@@ -1,5 +1,5 @@
 <?php
-// This file is part of report_grouptool for Moodle - http://moodle.org/
+     // This file is part of report_grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ class pdf extends \pdf {
                 $viewname);
         }
 
-        $this->useridentityfields = grouptool::get_useridentity_fields();
+        $this->useridentityfields = report_grouptool::get_useridentity_fields();
         $this->setFontSubsetting(false);
 
         // Set orientation (P/L)!
