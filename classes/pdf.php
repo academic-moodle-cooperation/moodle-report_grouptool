@@ -1,5 +1,5 @@
 <?php
-     // This file is part of report_grouptool for Moodle - http://moodle.org/
+// This file is part of mod_grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Extending the moodle pdf class with a custom header and some helperfunctions for proper data-output.
  *
- * @package   report_grouptool
+ * @package   mod_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,11 +26,6 @@ namespace report_grouptool;
 
 use context_course;
 use report_grouptool\local\tests\grouptool;
-use function report_grouptool\format_string;
-use function report_grouptool\fullname;
-use function report_grouptool\get_string;
-use function report_grouptool\optional_param;
-use function report_grouptool\userdate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +34,7 @@ require_once('../../lib/pdflib.php');
 /**
  * Extended pdf class with convenience methods for outputting Grouptool pdfs
  *
- * @package   report_grouptool
+ * @package   mod_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -103,7 +98,7 @@ class pdf extends \pdf {
      * @throws \coding_exception
      */
     public function __construct($type, $coursename, $grouptoolname, $timeavailable, $timedue,
-                            $viewname, $orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
+                                $viewname, $orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
         global $SITE, $USER;
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
@@ -116,7 +111,7 @@ class pdf extends \pdf {
                 $viewname);
         }
 
-        $this->useridentityfields = report_grouptool::get_useridentity_fields();
+        $this->useridentityfields = grouptool::get_useridentity_fields();
         $this->setFontSubsetting(false);
 
         // Set orientation (P/L)!
@@ -125,7 +120,7 @@ class pdf extends \pdf {
 
         // Set document information!
         $this->SetCreator(format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID)]).' | '.
-                get_string('pluginname', 'report_grouptool'));
+            get_string('pluginname', 'grouptool'));
         $this->SetAuthor(fullname($USER));
 
         // Set header/footer!
@@ -190,15 +185,15 @@ class pdf extends \pdf {
         $this->header1 = [];
         $this->header1[0] = get_string('course').":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
-        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
-        $this->header1[4] = get_string('groupoverview', 'report_grouptool');
+        $this->header1[2] = get_string('availabledate', 'grouptool').":";
+        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'grouptool') : userdate($timeavailable);
+        $this->header1[4] = get_string('groupoverview', 'grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'grouptool').":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
-        $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
+        $this->header2[2] = get_string('duedate', 'grouptool').":";
+        $this->header2[3] = empty($timedue) ? get_string('duedateno', 'grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
 
@@ -217,15 +212,15 @@ class pdf extends \pdf {
         $this->header1 = [];
         $this->header1[0] = get_string('course').":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
-        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
-        $this->header1[4] = get_string('userlist', 'report_grouptool');
+        $this->header1[2] = get_string('availabledate', 'grouptool').":";
+        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'grouptool') : userdate($timeavailable);
+        $this->header1[4] = get_string('userlist', 'grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'grouptool').":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
-        $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
+        $this->header2[2] = get_string('duedate', 'grouptool').":";
+        $this->header2[3] = empty($timedue) ? get_string('duedateno', 'grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
 
@@ -244,15 +239,15 @@ class pdf extends \pdf {
         $this->header1 = [];
         $this->header1[0] = get_string('course').":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
-        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
-        $this->header1[4] = get_string('overview', 'report_grouptool');
+        $this->header1[2] = get_string('availabledate', 'grouptool').":";
+        $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'grouptool') : userdate($timeavailable);
+        $this->header1[4] = get_string('overview', 'grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'grouptool').":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
-        $this->header1[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
+        $this->header2[2] = get_string('duedate', 'grouptool').":";
+        $this->header1[3] = empty($timedue) ? get_string('duedateno', 'grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
 
@@ -273,27 +268,27 @@ class pdf extends \pdf {
         $height = 7;
         $this->SetFont('', 'B');
         $this->MultiCell(15 * $scale, $height, $this->header1[0],
-                         $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
         $this->SetFont('', '');
         $this->MultiCell(41 * $scale, $height, $this->header1[1],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         // Spacer!
         $this->MultiCell(15 * $scale, $height, "",
-                         $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
         $this->SetFont('', 'B');
         $this->MultiCell(26 * $scale, $height, $this->header1[2],
-                         $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
         $this->SetFont('', '');
         $this->MultiCell(46 * $scale, $height, $this->header1[3],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         // Spacer!
         $this->MultiCell(15 * $scale, $height, "", $border, 'C', 0, 0, null, null, true, 1,
-                         false, false, $height, 'M', true);
+            false, false, $height, 'M', true);
         $this->SetFont('', 'B');
         $this->MultiCell(0, $height, $this->header1[4],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->Ln();
 
@@ -301,31 +296,31 @@ class pdf extends \pdf {
 
         $this->SetFont('', 'B');
         $this->MultiCell(15 * $scale, $height, $this->header2[0],
-                         $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->SetFont('', '');
         $this->MultiCell(41 * $scale, $height, $this->header2[1],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         // Spacer!
         $this->MultiCell(15 * $scale, $height, "",
-                         $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->SetFont('', 'B');
         $this->MultiCell(26 * $scale, $height, $this->header2[2],
-                         $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'L', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->SetFont('', '');
         $this->MultiCell(46 * $scale, $height, $this->header2[3],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         // Spacer!
         $this->MultiCell(15 * $scale, $height, "",
-                         $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'C', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->SetFont('', '');
         $this->MultiCell(0, $height, $this->header2[4],
-                         $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
+            $border, 'R', 0, 0, null, null, true, 1, false, false, $height, 'M', true);
 
         $this->Ln();
         $this->SetFontSize($oldfontsize);
@@ -377,13 +372,13 @@ class pdf extends \pdf {
         // Insert groupname!
         $this->SetFontSize(1.25 * self::NORMLINEHEIGHT);
         $this->MultiCell(0, $bigheight, $groupname, 0, 'L', false, 1, null, null, true, 1, true,
-                         false, $bigheight, 'M', true);
+            false, $bigheight, 'M', true);
         $this->Ln();
 
         // Insert groupinfo!
         $this->SetFontSize(1.0 * self::NORMLINEHEIGHT);
         $this->MultiCell(0, $normalheight, $groupinfo, 0, 'L', false, 1, null, null, true, 1,
-                         true, false, $normalheight, 'M', true);
+            true, false, $normalheight, 'M', true);
         $this->Ln();
         // Insert registrations & queue tables!
         if (count($registration)) {
@@ -394,8 +389,8 @@ class pdf extends \pdf {
         } else if (count($moodlemembers) == 0) {
             $this->SetFont('', 'I');
             $this->MultiCell(0, $normalheight,
-                             "--".get_string('no_registrations', 'report_grouptool')."--", 0, 'C', false,
-                             1, null, null, true, 1, true, false, $normalheight, 'M', true);
+                "--".get_string('no_registrations', 'grouptool')."--", 0, 'C', false,
+                1, null, null, true, 1, true, false, $normalheight, 'M', true);
             $this->SetFont('', '');
         }
 
@@ -423,9 +418,9 @@ class pdf extends \pdf {
             }
         } else {
             $this->SetFont('', 'I');
-            $this->MultiCell(0, $normalheight, "--".get_string('nobody_queued', 'report_grouptool')."--",
-                             0, 'C', false, 1, null, null, true, 1, true, false, $normalheight,
-                             'M', true);
+            $this->MultiCell(0, $normalheight, "--".get_string('nobody_queued', 'grouptool')."--",
+                0, 'C', false, 1, null, null, true, 1, true, false, $normalheight,
+                'M', true);
             $this->SetFont('', '');
         }
     }
@@ -463,11 +458,11 @@ class pdf extends \pdf {
         $identitycolumnwidth = self::calculate_identitycolumn_width();
 
         $this->SetFont('', 'B');
-        $this->MultiCell(0.1 * $writewidth, $normalheight, get_string('status', 'report_grouptool'),
-                         'RB', 'C', true, 0, null, null, true, 1, true, false, $normalheight,
-                         'M', true);
+        $this->MultiCell(0.1 * $writewidth, $normalheight, get_string('status', 'grouptool'),
+            'RB', 'C', true, 0, null, null, true, 1, true, false, $normalheight,
+            'M', true);
         $this->MultiCell(0.3 * $writewidth, $normalheight, get_string('fullname'), 'LRB', 'C',
-                         true, 0, null, null, true, 1, true, false, $normalheight, 'M', true);
+            true, 0, null, null, true, 1, true, false, $normalheight, 'M', true);
 
         $colcount = 0;
         $identityfieldscount = count($identityfields);
@@ -480,10 +475,10 @@ class pdf extends \pdf {
             }
             if ($key == 'email') {
                 $this->MultiCell($identitycolumnwidth * 2 * $writewidth, $normalheight, get_string('email'), $border, 'C', true,
-                        $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
+                    $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
             } else {
                 $this->MultiCell($identitycolumnwidth * $writewidth, $normalheight, \core_user\fields::get_display_name($key), $border, 'C',
-                        true, $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
+                    true, $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
             }
         }
 
@@ -507,13 +502,13 @@ class pdf extends \pdf {
         $normalheight = $this->normalheight;
 
         $this->MultiCell(0.1 * $writewidth, $normalheight, $status, 'TR', 'C', $fill || $forcefill, 0, null, null, true,
-                         1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
         $this->MultiCell(0.3 * $writewidth, $normalheight, $name, 'TLR', 'L', $fill || $forcefill, 0, null, null, true,
-                         1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
         $this->MultiCell(0.2 * $writewidth, $normalheight, $idnumber, 'TLR', 'L', $fill || $forcefill, 0, null, null, true,
-                         1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
         $this->MultiCell(0.4 * $writewidth, $normalheight, $email, 'TL', 'L', $fill || $forcefill, 1, null, null, true,
-                         1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
         $fill ^= 1;
     }
 
@@ -538,9 +533,9 @@ class pdf extends \pdf {
             $rowstatus = "?";
         }
         $this->MultiCell(0.1 * $writewidth, $normalheight, $rowstatus, 'TR', 'C', $fill || $forcefill, 0, null, null, true,
-                1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
         $this->MultiCell(0.3 * $writewidth, $normalheight, $row['name'], 'TLR', 'L', $fill || $forcefill, 0, null, null, true,
-                1, true, false, $normalheight, 'M', true);
+            1, true, false, $normalheight, 'M', true);
 
         $colcount = 0;
         $identityfieldscount = count($identityfields);
@@ -553,12 +548,12 @@ class pdf extends \pdf {
             }
             if ($key == 'email') {
                 $this->MultiCell($identitycolumnwidth * 2 * $writewidth, $normalheight, $row['email'], $border, 'C',
-                        $fill || $forcefill, $ln, null, null, true, 1, true, false,
-                        $normalheight, 'M', true);
+                    $fill || $forcefill, $ln, null, null, true, 1, true, false,
+                    $normalheight, 'M', true);
             } else {
                 $this->MultiCell($identitycolumnwidth * $writewidth, $normalheight, $row[$key], $border, 'C',
-                        $fill || $forcefill, $ln, null, null, true, 1, true, false,
-                        $normalheight, 'M', true);
+                    $fill || $forcefill, $ln, null, null, true, 1, true, false,
+                    $normalheight, 'M', true);
             }
         }
 
@@ -620,11 +615,11 @@ class pdf extends \pdf {
         }
         // Todo: Consider caching result of this calculation as it is the same for each row in one export.
         $basicwidths = [
-                'fullname' => 0.225,
-                'identity' => $this->calculate_identitycolumn_width(0.375, 1.5),
-                'email' => $this->calculate_identitycolumn_width(0.375, 1.5) * 1.5,
-                'registrations' => 0.225,
-                'queues' => 0.175
+            'fullname' => 0.225,
+            'identity' => $this->calculate_identitycolumn_width(0.375, 1.5),
+            'email' => $this->calculate_identitycolumn_width(0.375, 1.5) * 1.5,
+            'registrations' => 0.225,
+            'queues' => 0.175
         ];
         $totalwidth = array_sum($basicwidths);
         $colapsedwidth = $totalwidth;
@@ -643,7 +638,7 @@ class pdf extends \pdf {
 
         if (!in_array('fullname', $collapsed)) {
             $this->MultiCell($widths['fullname'], $height, $row['name'], $borderf, 'L', $fill, 0, null,
-                             null, true, 1, false, false, $height, 'M', true);
+                null, true, 1, false, false, $height, 'M', true);
             if ($getheightonly) {
                 $height = max([$height, $this->getLastH()]);
             }
@@ -659,29 +654,29 @@ class pdf extends \pdf {
             }
             if (!in_array($key, $collapsed)) {
                 $this->MultiCell($curwidth, $height, $row[$key], $border, 'L', $fill,
-                        0, null, null, true, 1, false, false, $height,
-                        'M', true);
+                    0, null, null, true, 1, false, false, $height,
+                    'M', true);
             }
         }
 
         if (!in_array('registrations', $collapsed)) {
             if (!empty($row['registrations']) && is_array($row['registrations'])) {
                 $registrationsstring = (count($row['registrations']) > 1) ?
-                        implode("\n", $row['registrations']) : $row['registrations'][0];
+                    implode("\n", $row['registrations']) : $row['registrations'][0];
                 if ($getheightonly) {
                     $this->MultiCell($widths['registrations'], $height, $registrationsstring,
-                                     $border, 'L', $fill, 0, null, null, true, 1, false, false,
-                                     $height, 'M', false);
+                        $border, 'L', $fill, 0, null, null, true, 1, false, false,
+                        $height, 'M', false);
                     $height = count($row['registrations']) * max([$height, $this->getLastH()]);
                 } else {
                     $this->MultiCell($widths['registrations'], $height, $registrationsstring,
-                                     $border, 'L', $fill, 0, null, null, true, 1, false, false,
-                                     $height, 'M', true);
+                        $border, 'L', $fill, 0, null, null, true, 1, false, false,
+                        $height, 'M', true);
                 }
             } else if ($header) {
                 $this->SetFont('', 'B');
                 $this->MultiCell($widths['registrations'], $height, $row['registrations'], $border, 'L',
-                                $fill, 0, null, null, true, 1, false, false, $height, 'M', true);
+                    $fill, 0, null, null, true, 1, false, false, $height, 'M', true);
                 if ($getheightonly) {
                     $height = max([$height, $this->getLastH()]);
                 }
@@ -689,8 +684,8 @@ class pdf extends \pdf {
             } else {
                 $this->SetFont('', 'I');
                 $this->MultiCell($widths['registrations'], $height,
-                                 get_string('no_registrations', 'report_grouptool'), $border, 'L', $fill,
-                                 0, null, null, true, 1, false, false, $height, 'M', true);
+                    get_string('no_registrations', 'grouptool'), $border, 'L', $fill,
+                    0, null, null, true, 1, false, false, $height, 'M', true);
                 if ($getheightonly) {
                     $height = max([$height, $this->getLastH()]);
                 }
@@ -705,27 +700,27 @@ class pdf extends \pdf {
                 }
                 if ($getheightonly) {
                     $this->MultiCell(0, $height, implode("\n", $queuesstrings), $borderl,
-                                     'L', $fill, 0, null, null, true, 1, false, false, $height,
-                                     'M', false);
+                        'L', $fill, 0, null, null, true, 1, false, false, $height,
+                        'M', false);
                     $height = count($row['queues']) * max([$height, $this->getLastH()]);
                 } else {
                     $this->MultiCell(0, $height, implode("\n", $queuesstrings), $borderl,
-                                     'L', $fill, 0, null, null, true, 1, false, false, $height,
-                                     'M', true);
+                        'L', $fill, 0, null, null, true, 1, false, false, $height,
+                        'M', true);
                 }
             } else if ($header) {
                 $this->SetFont('', 'B');
                 $this->MultiCell(0, $height, $row['queues'], $borderl, 'L', $fill, 0, null, null,
-                                 true, 1, false, false, $height, 'M', true);
+                    true, 1, false, false, $height, 'M', true);
                 if ($getheightonly) {
                     $height = max([$height, $this->getLastH()]);
                 }
                 $this->SetFont('', '');
             } else {
                 $this->SetFont('', 'I');
-                $this->MultiCell(0, $height, get_string('nowhere_queued', 'report_grouptool'), $borderl,
-                                 'L', $fill, 0, null, null, true, 1, false, false, $height,
-                                 'M', true);
+                $this->MultiCell(0, $height, get_string('nowhere_queued', 'grouptool'), $borderl,
+                    'L', $fill, 0, null, null, true, 1, false, false, $height,
+                    'M', true);
                 if ($getheightonly) {
                     $height = max([$height, $this->getLastH()]);
                 }
