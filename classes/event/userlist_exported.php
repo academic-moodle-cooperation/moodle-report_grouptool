@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
