@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_grouptool for Moodle - http://moodle.org/
+// This file is part of report_grouptool for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace report_grouptool\event;
 defined('MOODLE_INTERNAL') || die();
 
