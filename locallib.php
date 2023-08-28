@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// TODO new Download
-// TODO Fix Ranking
-
-
 /**
  *
  * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -229,7 +225,7 @@ class report_grouptool {
             $url->param('groupid', 0);
             echo $OUTPUT->box($OUTPUT->notification(get_string('group_not_in_grouping', 'grouptool').
                 html_writer::empty_tag('br').
-                get_string('switched_to_all_groups', 'grouptool'),
+                get_string('switched_to_all_groups', 'report_grouptool'),
                 \core\output\notification::NOTIFY_ERROR), 'generalbox centered');
         }
         return new single_select($url, 'groupid', $options, $groupid, false);
@@ -247,8 +243,8 @@ class report_grouptool {
 
         if (!$options) {
             $options = [
-                0 => get_string('portrait', 'grouptool'),
-                1 => get_string('landscape', 'grouptool')
+                0 => get_string('portrait', 'report_grouptool'),
+                1 => get_string('landscape', 'report_grouptool')
             ];
         }
 
@@ -555,10 +551,10 @@ class report_grouptool {
             $userdata = $this->get_user_data($groupingid, $groupid, $users, $orderby, $onlydata);
         } else {
             if (!$onlydata) {
-                echo $OUTPUT->box($OUTPUT->notification(get_string('no_users_to_display', 'grouptool'),
+                echo $OUTPUT->box($OUTPUT->notification(get_string('no_users_to_display', 'report_grouptool'),
                     \core\output\notification::NOTIFY_ERROR), 'centered generalbox');
             } else {
-                return get_string('no_users_to_display', 'grouptool');
+                return get_string('no_users_to_display', 'report_grouptool');
             }
         }
         $groupinfo = $this->get_active_groups(false, false, 0, $groupid, $groupingid,
@@ -616,15 +612,15 @@ class report_grouptool {
                 }
             }
             if (!in_array('registrations', $collapsed)) {
-                $registrationslink = get_string('registrations', 'grouptool');
+                $registrationslink = get_string('registrations', 'report_grouptool');
                 echo html_writer::tag('th', $registrationslink.
                     $this->collapselink('registrations', $collapsed), ['class' => '']);
             } else {
                 echo html_writer::tag('th', $this->collapselink('registrations', $collapsed), ['class' => '']);
             }
             if (!in_array('queues', $collapsed)) {
-                $queueslink = get_string('queues', 'grouptool').' ('.get_string('rank',
-                        'grouptool').')';
+                $queueslink = get_string('queues', 'report_grouptool').' ('.get_string('rank',
+                        'report_grouptool').')';
                 echo html_writer::tag('th', $queueslink.
                     $this->collapselink('queues', $collapsed), ['class' => '']);
             } else {
@@ -647,9 +643,9 @@ class report_grouptool {
             }
             $head['idnumber'] = \core_user\fields::get_display_name('idnumber');
             $head['email']         = \core_user\fields::get_display_name('email');
-            $head['registrations'] = get_string('registrations', 'grouptool');
-            $head['queues']        = get_string('queues', 'grouptool').' ('.get_string('rank',
-                    'grouptool').')';
+            $head['registrations'] = get_string('registrations', 'report_grouptool');
+            $head['queues']        = get_string('queues', 'report_grouptool').' ('.get_string('rank',
+                    'report_grouptool').')';
         }
 
         if (!$onlydata) {
@@ -849,8 +845,7 @@ class report_grouptool {
      * @throws moodle_exception
      */
     protected function get_download_links($downloadurl, $groupid = 0) {
-        // TODO Use capability
-        if (true | has_capability('report/grouptool:export', $this->context)) {
+        if (has_capability('report/grouptool:export', $this->context)) {
             $class = 'download';
             if ($groupid) {
                 $downloadurl = new moodle_url($downloadurl, ['groupid' => $groupid]);
@@ -904,7 +899,7 @@ class report_grouptool {
             $agrpsql = '';
             $agrpparams = [];
             if (!$isdownloading) {
-                echo $OUTPUT->box($OUTPUT->notification(get_string('no_groups_to_display', 'grouptool'),
+                echo $OUTPUT->box($OUTPUT->notification(get_string('no_groups_to_display', 'report_grouptool'),
                     \core\output\notification::NOTIFY_ERROR), 'generalbox centered');
             }
         }
@@ -1093,9 +1088,9 @@ class report_grouptool {
             foreach ($data as $group) {
                 $groupname = $group->name;
                 $groupinfo = get_string('total').' '.$group->total.' / '.
-                    get_string('registered', 'grouptool').' '.$group->registered.' / '.
-                    get_string('queued', 'grouptool').' '.$group->queued.' / '.
-                    get_string('free', 'grouptool').' '.$group->free;
+                    get_string('registered', 'report_grouptool').' '.$group->registered.' / '.
+                    get_string('queued', 'report_grouptool').' '.$group->queued.' / '.
+                    get_string('free', 'report_grouptool').' '.$group->free;
                 $regdata = $group->reg_data;
                 $queuedata = $group->queue_data;
                 $mregdata = isset($group->mreg_data) ? $group->mreg_data : [];
@@ -1106,29 +1101,29 @@ class report_grouptool {
                     true, 1, true, false, $pdf->getLastH(), 'M', true);
             }
             $pdf->SetFontSize(8);
-            $pdf->MultiCell(0, $pdf->getLastH(), get_string('status', 'grouptool'), '', 'L',
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('status', 'report_grouptool'), '', 'L',
                 false, 1, null, null, true, 1, true, false, $pdf->getLastH(),
                 'M', true);
-            foreach (explode("</li>", get_string('status_help', 'grouptool')) as $legendline) {
+            foreach (explode("</li>", get_string('status_help', 'report_grouptool')) as $legendline) {
                 $pdf->MultiCell(0, $pdf->getLastH(), strip_tags($legendline), '', 'L', false, 1,
                     null, null, true, 1, true, false, $pdf->getLastH(),
                     'M', true);
             }
         } else {
-            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'grouptool'), 'B',
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'report_grouptool'), 'B',
                 'LRTB', false, 1, null, null, true, 1, true, false,
                 $pdf->getLastH(), 'M', true);
         }
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'grouptool');
+                get_string('group').' '.get_string('overview', 'report_grouptool');
         }
         $filename = clean_filename("$filename.pdf");
         $pdf->Output($filename, 'D');
@@ -1167,8 +1162,8 @@ class report_grouptool {
         $lines = [];
         $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
         if (count($groups) > 0) {
-            $lines[] = "*** ".get_string('status', 'grouptool')."\n";
-            foreach (explode("</li>", get_string('status_help', 'grouptool')) as $legendline) {
+            $lines[] = "*** ".get_string('status', 'report_grouptool')."\n";
+            foreach (explode("</li>", get_string('status_help', 'report_grouptool')) as $legendline) {
                 $lines[] = "***\t".strip_tags($legendline);
             }
             $lines[] = "";
@@ -1176,22 +1171,22 @@ class report_grouptool {
             foreach ($groups as $group) {
                 $lines[] = $group->name;
                 $lines[] = "\t".get_string('total').' '.$group->total." / ".
-                    get_string('registered', 'grouptool').' '.$group->registered." / ".
-                    get_string('queued', 'grouptool').' '.$group->queued." / ".
-                    get_string('free', 'grouptool').' '.$group->free;
+                    get_string('registered', 'report_grouptool').' '.$group->registered." / ".
+                    get_string('queued', 'report_grouptool').' '.$group->queued." / ".
+                    get_string('free', 'report_grouptool').' '.$group->free;
                 if (isset($group->mreg_data)) {
                     $mregs = count($group->mreg_data);
                 } else {
                     $mregs = 0;
                 }
                 if ($group->registered > 0) {
-                    $lines[] = "\t".get_string('registrations', 'grouptool');
+                    $lines[] = "\t".get_string('registrations', 'report_grouptool');
                     foreach ($group->reg_data as $reg) {
                         $lines[] = "\t\t".$reg['status']."\t".$reg['name'].
                             self::get_useridentity_values_for_txt($reg['useridentityvalues']);
                     }
                 } else if ($mregs == 0) {
-                    $lines[] = "\t\t--".get_string('no_registrations', 'grouptool')."--";
+                    $lines[] = "\t\t--".get_string('no_registrations', 'report_grouptool')."--";
                 }
                 if ($mregs >= 1) {
                     foreach ($group->mreg_data as $mreg) {
@@ -1200,18 +1195,18 @@ class report_grouptool {
                     }
                 }
                 if ($group->queued > 0) {
-                    $lines[] = "\t".get_string('queue', 'grouptool');
+                    $lines[] = "\t".get_string('queue', 'report_grouptool');
                     foreach ($group->queue_data as $queue) {
                         $lines[] = "\t\t".$queue['rank']."\t".$queue['name']."\t".
                             self::get_useridentity_values_for_txt($queue['useridentityvalues']);
                     }
                 } else {
-                    $lines[] = "\t\t--".get_string('nobody_queued', 'grouptool')."--";
+                    $lines[] = "\t\t--".get_string('nobody_queued', 'report_grouptool')."--";
                 }
                 $lines[] = "";
             }
         } else {
-            $lines[] = get_string('no_data_to_display', 'grouptool');
+            $lines[] = get_string('no_data_to_display', 'report_grouptool');
         }
         $filecontent = implode(GROUPTOOL_NL, $lines);
 
@@ -1220,13 +1215,13 @@ class report_grouptool {
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').'_'.get_string('overview', 'grouptool');
+                get_string('group').'_'.get_string('overview', 'report_grouptool');
         }
         $filename = clean_filename("$filename.txt");
         ob_clean();
@@ -1259,13 +1254,13 @@ class report_grouptool {
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'grouptool');
+                get_string('group').' '.get_string('overview', 'report_grouptool');
         }
         $filename = clean_filename("$filename.ods");
         $workbook = new MoodleODSWorkbook("-");
@@ -1300,14 +1295,14 @@ class report_grouptool {
         if (!empty($groupid)) {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
                 groups_get_group_name($groupid).'_'.
-                get_string('overview', 'grouptool'));
+                get_string('overview', 'report_grouptool'));
         } else if (!empty($groupingid)) {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
                 groups_get_grouping_name($groupingid).'_'.
-                get_string('overview', 'grouptool'));
+                get_string('overview', 'report_grouptool'));
         } else {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'grouptool'));
+                get_string('group').' '.get_string('overview', 'report_grouptool'));
         }
         $filename = clean_filename("$filename.xlsx");
         $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
@@ -1345,9 +1340,9 @@ class report_grouptool {
                     $lines[] = get_string('fullname')."\t".
                         self::get_useridentity_values_for_txt
                         (self::convert_associative_array_into_nested_index_array(self::get_useridentity_fields())) . "\t" .
-                        get_string('registrations', 'grouptool')."\t".
+                        get_string('registrations', 'report_grouptool')."\t".
                         get_string('queues', 'grouptool')." (".get_string('rank',
-                            'grouptool').")";
+                            'report_grouptool').")";
                 } else {
                     $rows = max([1, count($user['registrations']), count($user['queues'])]);
 
@@ -1365,14 +1360,14 @@ class report_grouptool {
                             $line = "\t\t";
                         }
                         if ((count($user['registrations']) == 0) && ($i == 0)) {
-                            $line .= "\t".get_string('no_registrations', 'grouptool');
+                            $line .= "\t".get_string('no_registrations', 'report_grouptool');
                         } else if (key_exists($i, $user['registrations'])) {
                             $line .= "\t".$user['registrations'][$i];
                         } else {
                             $line .= "\t";
                         }
                         if ((count($user['queues']) == 0) && ($i == 0)) {
-                            $line .= "\t".get_string('nowhere_queued', 'grouptool');
+                            $line .= "\t".get_string('nowhere_queued', 'report_grouptool');
                         } else if (key_exists($i, $user['queues'])) {
                             $line .= "\t".$user['queues'][$i]['name']."(".$user['queues'][$i]['rank'].")";
                         } else {
@@ -1383,19 +1378,19 @@ class report_grouptool {
                 }
             }
         } else {
-            $lines[] = get_string('no_data_to_display', 'grouptool');
+            $lines[] = get_string('no_data_to_display', 'report_grouptool');
         }
         $filecontent = implode(GROUPTOOL_NL, $lines);
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('userlist', 'grouptool');
+                get_string('userlist', 'report_grouptool');
         }
         $filename = clean_filename("$filename.txt");
         ob_clean();
@@ -1462,14 +1457,14 @@ class report_grouptool {
         if (!empty($groupid)) {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
                 groups_get_group_name($groupid).'_'.
-                get_string('userlist', 'grouptool'));
+                get_string('userlist', 'report_grouptool'));
         } else if (!empty($groupingid)) {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
                 groups_get_grouping_name($groupingid).'_'.
-                get_string('userlist', 'grouptool'));
+                get_string('userlist', 'report_grouptool'));
         } else {
             $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
-                get_string('userlist', 'grouptool'));
+                get_string('userlist', 'report_grouptool'));
         }
         $filename = clean_filename("$filename.xlsx");
 
@@ -1632,7 +1627,7 @@ class report_grouptool {
                     $worksheet->set_column($k + 1, $k + 1, $columnwidth['queues_rank'], null, $hidden);
                     $worksheet->merge_cells($j, $k, $j, $k + 1);
                     $worksheet->write_string($j + 1, $k, get_string('group', 'group'), $headlinenb);
-                    $worksheet->write_string($j + 1, $k + 1, get_string('rank', 'grouptool'),
+                    $worksheet->write_string($j + 1, $k + 1, get_string('rank', 'report_grouptool'),
                         $headlinelast);
                     $k += 2; // ...k = n+5!
                     $rows = 2;
@@ -1689,7 +1684,7 @@ class report_grouptool {
                         }
                         if ((count($user['registrations']) == 0) && ($i == 0)) {
                             $worksheet->write_string($j, $k, get_string('no_registrations',
-                                'grouptool'),
+                                'report_grouptool'),
                                 $noregentriesformat);
                             if ($rows > 1) {
                                 $worksheet->merge_cells($j, $k, $j + $rows - 1, $k);
@@ -1702,7 +1697,7 @@ class report_grouptool {
                         }
                         if ((count($user['queues']) == 0) && ($i == 0)) {
                             $worksheet->write_string($j, $k + 1, get_string('nowhere_queued',
-                                'grouptool'),
+                                'report_grouptool'),
                                 $noqueueentriesformat);
                             $worksheet->merge_cells($j, $k + 1, $j + $rows - 1, $k + 2);
                         } else if (key_exists($i, $user['queues'])) {
@@ -1779,20 +1774,20 @@ class report_grouptool {
                 $pdf->add_userdata($user);
             }
         } else {
-            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'grouptool'),
+            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'report_grouptool'),
                 'B', 'LRTB', false, 1, null, null, true, 1, true,
                 false, $pdf->getLastH(), 'M', true);
         }
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('userlist', 'grouptool');
+                get_string('userlist', 'report_grouptool');
         }
         $filename = clean_filename("$filename.pdf");
 
@@ -1826,13 +1821,13 @@ class report_grouptool {
 
         if (!empty($groupid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('userlist', 'grouptool');
+                groups_get_group_name($groupid).'_'.get_string('userlist', 'report_grouptool');
         } else if (!empty($groupingid)) {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'grouptool');
+                groups_get_grouping_name($groupingid).'_'.get_string('userlist', 'report_grouptool');
         } else {
             $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('userlist', 'grouptool');
+                get_string('userlist', 'report_grouptool');
         }
         $filename = clean_filename("$filename.ods");
 

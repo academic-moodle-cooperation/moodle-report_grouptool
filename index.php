@@ -27,15 +27,13 @@ use core\report_helper;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
-// TODO Fix warnings
-// TODO use capability
+
 $id = required_param('id', PARAM_INT);   // Course.
-
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
-
 require_course_login($course);
-
 $coursecontext = context_course::instance($course->id);
+require_capability('report/grouptool:view', $coursecontext);
+
 $url = '/report/grouptool/index.php';
 $PAGE->set_url($url, ['id' => $id]);
 $PAGE->set_pagelayout('report');
@@ -52,7 +50,7 @@ if (!isset($SESSION->report_grouptool)) {
 }
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    echo $OUTPUT->heading(format_string($grouptool->name));
+    echo $OUTPUT->heading($OUTPUT->box(format_string($grouptool->name)),['href'=>'#']);
     $report->view_userlist();
 }
 
