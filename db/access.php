@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-
     'report/grouptool:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -75,7 +74,6 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ]
-    ]
-
+    ],
 ];
 

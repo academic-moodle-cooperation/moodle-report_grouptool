@@ -27,15 +27,13 @@ use core\report_helper;
 require('../../config.php');
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
-// TODO Fix warnings
-// TODO use capability
+
 $id = required_param('id', PARAM_INT);   // Course.
-
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
-
 require_course_login($course);
-
 $coursecontext = context_course::instance($course->id);
+require_capability('report/grouptool:view', $coursecontext);
+
 $url = '/report/grouptool/index.php';
 $PAGE->set_url($url, ['id' => $id]);
 $PAGE->set_pagelayout('report');
@@ -50,11 +48,22 @@ report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'
 if (!isset($SESSION->report_grouptool)) {
     $SESSION->report_grouptool = new stdClass();
 }
-
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    echo $OUTPUT->heading(format_string($grouptool->name));
+    // collapse icon
+    $icon = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>',
+            ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
+    // Heading with collapse feature
+    echo $OUTPUT->heading(html_writer::tag('a', $icon,
+         ['data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
+         'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.format_string($grouptool->name).
+         ' '.html_writer::tag('a', '#',
+         ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
+
+    echo $OUTPUT->box_start($classes = "collapse", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();
+    echo $OUTPUT->box_end();
 }
+
 echo $OUTPUT->footer();
 

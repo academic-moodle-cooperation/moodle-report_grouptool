@@ -26,6 +26,8 @@
 require_once('../../config.php');
 
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+// require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
+
 
 $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('grouptool', $cmid);
@@ -35,8 +37,8 @@ $url = new moodle_url($CFG->wwwroot.'/report/grouptool/download.php', ['id' => $
 $PAGE->set_url($url);
 $instance = new report_grouptool($cmid);
 
-require_login($cm->course, true, $cm);
-require_capability('reort/grouptool:export', $context);
+// require_login($cm->course, true, $cm);
+// require_capability('report/grouptool:export', $context);
 
 $groupingid = optional_param('groupingid', 0, PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
@@ -65,7 +67,6 @@ if (empty($cm->uservisible)) {
     die;
 }
 
-$tab = required_param('tab', PARAM_ALPHA);
 $format = required_param('format', PARAM_INT);
 switch ($format) {
     case GROUPTOOL_PDF:
@@ -84,9 +85,9 @@ switch ($format) {
         $readableformat = 'unknown';
 }
 
-require_capability('report/grouptool:view_regs_course_view', $context);
+// require_capability('report/grouptool:view_regs_course_view', $context);
 // Trigger userlist event.
-$event = \mod_grouptool\event\userlist_exported::create([
+$event = \report_grouptool\event\userlist_exported::create([
     'objectid' => $cm->instance,
     'context'  => context_module::instance($cm->id),
     'other'    => [
