@@ -14,7 +14,8 @@ Description
 -----------
 
 The Grouptool Report is an extension to the [Grouptool
-module](https://academic-moodle-cooperation.org/module/grouptool/)
+module](https://academic-moodle-cooperation.org/module/grouptool/). It gives the teacher an overview over all 
+participants in each grouptool and the option to export them as lists.
 
 
 Example
