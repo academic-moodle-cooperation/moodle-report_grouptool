@@ -50,7 +50,8 @@ if (!isset($SESSION->report_grouptool)) {
 }
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    echo $OUTPUT->heading($OUTPUT->box(format_string($grouptool->name)),['href'=>'#']);
+    echo $OUTPUT->heading(format_string($grouptool->name).html_writer::tag('a', ' #',
+        ['href' => new moodle_url('/mod/grouptool/view.php',['id' => $grouptool->coursemodule])]));
     $report->view_userlist();
 }
 
