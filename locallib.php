@@ -364,14 +364,6 @@ class report_grouptool {
                 $keys = array_keys($groupdata);
                 foreach ($keys as $key) {
                     $groupdata[$key]->queued = null;
-
-                    // TODO ANNE
-                    // TODO remove comment
-                    // if ($includequeues && $this->grouptool->use_queue) {
-                    // $attr = ['agrpid' => $groupdata[$key]->agrpid];
-                    // $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
-                    // }
-
                     if ($includequeues) {
                         $attr = ['agrpid' => $groupdata[$key]->agrpid];
                         $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
@@ -461,7 +453,6 @@ class report_grouptool {
         if (!$onlydata) {
             flush();
             $orientation = optional_param('orientation', 0, PARAM_BOOL);
-            // TODO use REPORT
             $downloadurl = new moodle_url('/report/grouptool/download.php?tab=userlist',
                 [
                     'id'          => $this->cm->id,
@@ -473,7 +464,6 @@ class report_grouptool {
         }
 
         // Get all ppl that are allowed to register!
-        // TODO use capability
         // list($esql, $params) = get_enrolled_sql($this->context, 'report/grouptool:register');
         list($esql, $params) = get_enrolled_sql($this->context);
         $sql = "SELECT u.id
