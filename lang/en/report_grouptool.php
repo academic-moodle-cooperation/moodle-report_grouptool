@@ -17,7 +17,7 @@
 /**
  * Strings for component 'report_grouptool', language 'de'
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @author    Hannes Laimer
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
