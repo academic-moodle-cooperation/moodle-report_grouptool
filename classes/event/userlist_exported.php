@@ -17,7 +17,7 @@
 /**
  * The mod_grouptool_userlist_exported event.
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The \report_grouptool\userlist_exported class holds the logic for the event
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

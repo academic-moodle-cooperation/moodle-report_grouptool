@@ -17,7 +17,7 @@
 /**
  * Various constant definitions used by mod_grouptool, separated to not having to include big library files.
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
