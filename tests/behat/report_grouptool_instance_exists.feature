@@ -15,6 +15,7 @@ Feature: Course report grouptool is only available if at least one grouptool cou
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
+  @javascript
   Scenario: One grouptool instance exists - the course grouptool report is shown
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -25,4 +26,3 @@ Feature: Course report grouptool is only available if at least one grouptool cou
     And I am on the "Course 1" course page
     And I follow "Reports"
     Then I should see "Grouptool"
-
