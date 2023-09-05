@@ -20,7 +20,7 @@ Feature: Course report grouptool is only available if at least one grouptool cou
     And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Grouptool" to section "1" and I fill the form with:
-      | Groutool name  | Test grouptool name |
+      | Grouptool name  | Test grouptool name |
       | Description    | Test description    |
     And I am on the "Course 1" course page
     And I follow "Reports"
