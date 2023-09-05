@@ -16,14 +16,13 @@ Feature: Course report grouptool is only available if at least one grouptool cou
       | teacher1 | C1 | editingteacher |
 
   Scenario: One grouptool instance exists - the course grouptool report is shown
-    Given the following "activity" exists:
-      | activity    | grouptool          |
-      | course      | C1                 |
-      | idnumber    | grouptoolid        |
-      | name        | Grouptool name     |
-      | intro       | Grouptool Desc     |
-      | section     | 1                  |
-    When I am on the "Course 1" course page logged in as teacher1
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I turn editing mode on
+    And I add a "Grouptool" to section "1" and I fill the form with:
+      | Groutool name  | Test grouptool name |
+      | Description    | Test description    |
+    And I am on the "Course 1" course page
     And I follow "Reports"
     Then I should see "Grouptool"
 
