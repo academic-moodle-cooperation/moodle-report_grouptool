@@ -18,11 +18,12 @@ Feature: Course report grouptool is only available if at least one grouptool cou
   @javascript
   Scenario: One grouptool instance exists - the course grouptool report is shown
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
-    And I add a "Grouptool" to section "1" and I fill the form with:
-      | Grouptool name  | Test grouptool name |
-      | Description    | Test description    |
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Grouptool" to section "1"
+    And I set the following fields to these values:
+      | Grouptool name | Test Grouptool |
+      | Description    | Description    |
+    And I click on "Save and return to course" "button"
     And I am on the "Course 1" course page
     And I follow "Reports"
     Then I should see "Grouptool"
