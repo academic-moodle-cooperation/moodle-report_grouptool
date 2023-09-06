@@ -23,5 +23,5 @@ Feature: Course report grouptool is only available if at least one grouptool cou
   Scenario: A grouptool instance exists - the course grouptool report is shown
     When I log in as "teacher1"
     And I am on the "Course 1" course page
-    And I click on "Reports" "link"
+    And I click on " Reports " "link"
     Then I should see "Grouptool"
