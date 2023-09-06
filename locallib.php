@@ -160,8 +160,8 @@ class report_grouptool {
 
     /**
      * Returns the dropdown for each download
-     * @param $url Url (will be changed)
-     * @param $orientation orientation (will be changed)
+     * @param string $url Url (will be changed)
+     * @param int $orientation orientation (will be changed)
      * @return void
      * @throws coding_exception
      */
@@ -176,10 +176,10 @@ class report_grouptool {
     /**
      * Retunrs Dropdown Menus to select the paramters for download
      *
-     * @param $url URL of Download
-     * @param $groupingid Groupingid of grouptool
-     * @param $groupid Groupid of grouptool
-     * @param $orientation orienation which should be used
+     * @param string $url URL of Download
+     * @param int $groupingid Groupingid of grouptool
+     * @param int $groupid Groupid of grouptool
+     * @param int $orientation orienation which should be used
      * @return void
      * @throws coding_exception
      * @throws dml_exception
