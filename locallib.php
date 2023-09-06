@@ -14,12 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This class helps to show reports for individual grouptools
- * @package report_grouptool
- * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
 require_once($CFG->dirroot.'/mod/grouptool/definitions.php');
@@ -30,6 +25,13 @@ require_once($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/grade/grade_grade.php');
 require_once($CFG->libdir.'/pdflib.php');
+
+/**
+ * This class helps to show reports for individual grouptools
+ * @package report_grouptool
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_grouptool {
 
     /** @var object */
@@ -158,12 +160,13 @@ class report_grouptool {
 
     /**
      * Returns the dropdown for each download
-     * @param $url
-     * @param $orientation
+     * @param $url Url (will be changed)
+     * @param $orientation orientation (will be changed)
      * @return void
      * @throws coding_exception
      */
     protected function get_download_dropdown($url, $orientation) {
+        // TODO
         $orientationselect = $this->get_orientation_select($url, $orientation);
 
         echo html_writer::tag('div', get_string('orientation', 'report_grouptool').'&nbsp;'.
@@ -172,10 +175,11 @@ class report_grouptool {
     }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
-     * @param $url
-     * @param $groupingid
-     * @param $groupid
-     * @param $orientation
+     *
+     * @param $url URL of Download
+     * @param $groupingid Groupingid of grouptool
+     * @param $groupid Groupid of grouptool
+     * @param $orientation orienation which should be used
      * @return void
      * @throws coding_exception
      * @throws dml_exception
