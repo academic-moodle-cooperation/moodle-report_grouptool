@@ -17,9 +17,10 @@ Feature: Course report grouptool is only available if at least one grouptool cou
     And the following "activities" exist:
       | activity    | name                | course | idnumber     |
       | grouptool   | Grouptool name      | C1     | grouptool0   |
+    And I change window size to "large"
 
   @javascript
-  Scenario: One grouptool instance exists - the course grouptool report is shown
+  Scenario: A grouptool instance exists - the course grouptool report is shown
     When I log in as "teacher1"
     And I am on the "Course 1" course page
     And I click on "Reports" "link"
