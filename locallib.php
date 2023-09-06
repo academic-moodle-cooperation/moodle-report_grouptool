@@ -161,17 +161,14 @@ class report_grouptool {
     /**
      * Returns the dropdown for each download
      * @param string $url Url (will be changed)
-     * @param int $orientation orientation (will be changed)
      * @return void
      * @throws coding_exception
      */
-    protected function get_download_dropdown($url, $orientation) {
+    protected function get_download_dropdown($url) {
         // TODO
-        $orientationselect = $this->get_orientation_select($url, $orientation);
+        $download = $this->get_download_select($url);
 
-        echo html_writer::tag('div', get_string('orientation', 'report_grouptool').'&nbsp;'.
-                $OUTPUT->render($orientationselect),
-                ['class' => 'centered grouptool_userlist_filter']);
+        echo $OUTPUT->render($download);
     }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
@@ -269,6 +266,27 @@ class report_grouptool {
         }
 
         return new single_select($url, 'orientation', $options, $orientation, false);
+    }
+    /**
+     * Returns a single select to change currently selected page-orientation.
+     *
+     * @param moodle_url $url Base URL to use
+     * @return single_select
+     * @throws coding_exception
+     */
+    protected function get_download_select($url) {
+        static $options = null;
+
+        if (!$options) {
+            $options = [
+                GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
+                GROUPTOOL_XLSX => get_string('download_xlsx', 'report_grouptool'),
+                GROUPTOOL_PDF => get_string('download_pdf', 'report_grouptool'),
+                GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool')
+            ];
+        }
+
+        return new single_select($url, 'format', $options, 0, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -552,6 +570,7 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
+            echo $this->get_download_dropdown($downloadurl);
             echo $this->get_download_links($downloadurl);
             flush();
         }
