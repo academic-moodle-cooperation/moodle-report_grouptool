@@ -165,19 +165,10 @@ class report_grouptool {
      * @throws dml_exception
      * @throws required_capability_exception
      */
-    protected function get_download_dropdown($url, $groupingid, $groupid, $orientation) {
-
-        $groupingselect = $this->get_grouping_select($url, $groupingid);
-        $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
+    protected function get_download_dropdown($url, $orientation) {
         $orientationselect = $this->get_orientation_select($url, $orientation);
 
-        echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
-                $OUTPUT->render($groupingselect),
-                ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
-                $OUTPUT->render($groupselect),
-                ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
+        echo html_writer::tag('div', get_string('orientation', 'report_grouptool').'&nbsp;'.
                 $OUTPUT->render($orientationselect),
                 ['class' => 'centered grouptool_userlist_filter']);
     }
@@ -204,7 +195,7 @@ class report_grouptool {
             html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
                 $OUTPUT->render($groupselect),
                 ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
+            html_writer::tag('div', get_string('orientation', 'report_grouptool').'&nbsp;'.
                 $OUTPUT->render($orientationselect),
                 ['class' => 'centered grouptool_userlist_filter']);
     }
