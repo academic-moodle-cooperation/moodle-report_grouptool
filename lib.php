@@ -25,8 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * This function extends the navigation with the report items
  * @package report_grouptool
- * @global stdClass $CFG
- * @global core_renderer $OUTPUT
  * @param navigation_node $navigation The navigation node to extend
  * @param stdClass        $course     The course to object for the report
  * @param context         $context    The context of the course

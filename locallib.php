@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * This class helps to show reports for individual grouptools
+ * @package report_grouptool
  * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -156,14 +157,11 @@ class report_grouptool {
     }
 
     /**
+     * Returns the dropdown for each download
      * @param $url
-     * @param $groupingid
-     * @param $groupid
      * @param $orientation
      * @return void
      * @throws coding_exception
-     * @throws dml_exception
-     * @throws required_capability_exception
      */
     protected function get_download_dropdown($url, $orientation) {
         $orientationselect = $this->get_orientation_select($url, $orientation);
