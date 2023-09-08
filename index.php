@@ -51,15 +51,16 @@ if (!isset($SESSION->report_grouptool)) {
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
     // collapse icon
+    $iconcollapsed = html_writer::tag('span', '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>',
+        ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Expand"]);
     $icon = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>',
             ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
     // Heading with collapse feature
-    echo $OUTPUT->heading(html_writer::tag('a', $icon,
-         ['data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
-         'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.format_string($grouptool->name).
-         ' '.html_writer::tag('a', '#',
+    echo $OUTPUT->heading(html_writer::tag('a', $iconcollapsed,
+         ['id' => 'collapse','data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
+         'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.
+         ' '.html_writer::tag('a',format_string($grouptool->name) ,
          ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
-
     echo $OUTPUT->box_start($classes = "collapse", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();
     echo $OUTPUT->box_end();

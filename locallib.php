@@ -167,8 +167,9 @@ class report_grouptool {
     protected function get_download_dropdown($url) {
         // TODO
         $download = $this->get_download_select($url);
-
-        echo $OUTPUT->render($download);
+        echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
+            $OUTPUT->render($download),
+            ['class' => 'centered grouptool_userlist_download']);
     }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
@@ -570,7 +571,7 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            echo $this->get_download_dropdown($downloadurl);
+            // echo $this->get_download_dropdown($downloadurl);
             echo $this->get_download_links($downloadurl);
             flush();
         }
