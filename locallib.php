@@ -134,7 +134,7 @@ class report_grouptool {
      * @throws required_capability_exception
      */
     public function view_userlist() {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
 
         $groupid = optional_param('groupid', 0, PARAM_INT);
         $groupingid = optional_param('groupingid', 0, PARAM_INT);
@@ -159,16 +159,16 @@ class report_grouptool {
     }
 
     /**
-     * Returns the dropdown for each download
-     * @param string $url Url (will be changed)
+     * Returns the dropdown for each download option
+     * @param string $url Url of the Dowload link
      * @return void
      * @throws coding_exception
      */
     protected function get_download_dropdown($url) {
-        // TODO
-        $download = $this->get_download_select($url);
-        echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
-            $OUTPUT->render($download),
+        global $OUTPUT;
+        $downloadselect = $this->get_download_select($url);
+        echo html_writer::tag('div', get_string('download_options', 'report_groutool').'&nbsp;'.
+            $OUTPUT->render($downloadselect),
             ['class' => 'centered grouptool_userlist_download']);
     }
     /**
@@ -287,7 +287,7 @@ class report_grouptool {
             ];
         }
 
-        return new single_select($url, 'format', $options, 0, false);
+        return new single_select($url, 'format', $options, GROUPTOOL_TXT, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -571,8 +571,8 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            // echo $this->get_download_dropdown($downloadurl);
-            echo $this->get_download_links($downloadurl);
+            echo $this->get_download_dropdown($downloadurl);
+            // echo $this->get_download_links($downloadurl);
             flush();
         }
 
