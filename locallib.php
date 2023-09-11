@@ -167,7 +167,7 @@ class report_grouptool {
     protected function get_download_dropdown($url) {
         global $OUTPUT;
         $downloadselect = $this->get_download_select($url);
-        echo html_writer::tag('div', get_string('download_options', 'report_groutool').'&nbsp;'.
+        echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
             $OUTPUT->render($downloadselect),
             ['class' => 'centered grouptool_userlist_download']);
     }
