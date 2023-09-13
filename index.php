@@ -57,7 +57,7 @@ foreach ($grouptools as $grouptool) {
             ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
     // Heading with collapse feature
     echo $OUTPUT->heading(html_writer::tag('a', $iconcollapsed,
-         ['id' => 'collapse','data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
+         ['id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
          'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.
          ' '.html_writer::tag('a',format_string($grouptool->name) ,
          ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
