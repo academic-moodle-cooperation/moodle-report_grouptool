@@ -17,7 +17,7 @@
 /**
  * Strings for component 'report_grouptool', language 'de'
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @author    Hannes Laimer
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -200,6 +200,11 @@ $string['deselect'] = 'Deselect';
 $string['determinismerror'] = 'The registration end can\'t be before the registration start or in the past.';
 $string['digits'] = 'Minimum digits';
 $string['disabled'] = 'Disabled';
+$string['download_txt'] = 'TXT';
+$string['download_ods'] = 'ODS';
+$string['download_options'] = 'Download as';
+$string['download_pdf'] = 'PDF';
+$string['download_xlsx'] = 'XLSX';
 $string['drag'] = 'Move';
 $string['due'] = 'Grouptool due';
 $string['duedate'] = 'Registration end';
