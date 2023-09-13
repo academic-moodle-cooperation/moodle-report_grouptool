@@ -59,7 +59,7 @@ foreach ($grouptools as $grouptool) {
     echo $OUTPUT->heading(html_writer::tag('a', $iconcollapsed,
          ['id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
          'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.
-         ' '.html_writer::tag('a',format_string($grouptool->name) ,
+         ' '.html_writer::tag('a', format_string($grouptool->name),
          ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
     echo $OUTPUT->box_start($classes = "collapse", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();
