@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- *
- * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
 require_once($CFG->dirroot.'/mod/grouptool/definitions.php');
@@ -29,6 +25,13 @@ require_once($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/grade/grade_grade.php');
 require_once($CFG->libdir.'/pdflib.php');
+
+/**
+ * This class helps to show reports for individual grouptools
+ * @package report_grouptool
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_grouptool {
 
     /** @var object */
@@ -131,7 +134,7 @@ class report_grouptool {
      * @throws required_capability_exception
      */
     public function view_userlist() {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
 
         $groupid = optional_param('groupid', 0, PARAM_INT);
         $groupingid = optional_param('groupingid', 0, PARAM_INT);
@@ -154,12 +157,27 @@ class report_grouptool {
         flush();
         $this->userlist_table($groupingid, $groupid);
     }
+
+    /**
+     * Returns the dropdown for each download option
+     * @param string $url Url of the Dowload link
+     * @return void
+     * @throws coding_exception
+     */
+    protected function get_download_dropdown($url) {
+        global $OUTPUT;
+        $downloadselect = $this->get_download_select($url);
+        echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
+            $OUTPUT->render($downloadselect),
+            ['class' => 'centered grouptool_userlist_download']);
+    }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
-     * @param $url
-     * @param $groupingid
-     * @param $groupid
-     * @param $orientation
+     *
+     * @param string $url URL of Download
+     * @param int $groupingid Groupingid of grouptool
+     * @param int $groupid Groupid of grouptool
+     * @param int $orientation orienation which should be used
      * @return void
      * @throws coding_exception
      * @throws dml_exception
@@ -177,7 +195,7 @@ class report_grouptool {
             html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
                 $OUTPUT->render($groupselect),
                 ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
+            html_writer::tag('div', get_string('orientation', 'report_grouptool').'&nbsp;'.
                 $OUTPUT->render($orientationselect),
                 ['class' => 'centered grouptool_userlist_filter']);
     }
@@ -249,6 +267,27 @@ class report_grouptool {
         }
 
         return new single_select($url, 'orientation', $options, $orientation, false);
+    }
+    /**
+     * Returns a single select to change currently selected page-orientation.
+     *
+     * @param moodle_url $url Base URL to use
+     * @return single_select
+     * @throws coding_exception
+     */
+    protected function get_download_select($url) {
+        static $options = null;
+
+        if (!$options) {
+            $options = [
+                GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
+                GROUPTOOL_XLSX => get_string('download_xlsx', 'report_grouptool'),
+                GROUPTOOL_PDF => get_string('download_pdf', 'report_grouptool'),
+                GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool')
+            ];
+        }
+
+        return new single_select($url, 'format', $options, GROUPTOOL_TXT, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -532,7 +571,8 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            echo $this->get_download_links($downloadurl);
+            echo $this->get_download_dropdown($downloadurl);
+            // echo $this->get_download_links($downloadurl);
             flush();
         }
 

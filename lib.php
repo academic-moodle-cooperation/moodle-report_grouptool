@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * This file contains the moodle hooks for the grouptool module.
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,9 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * This function extends the navigation with the report items
- *
- * @global stdClass $CFG
- * @global core_renderer $OUTPUT
+ * @package report_grouptool
  * @param navigation_node $navigation The navigation node to extend
  * @param stdClass        $course     The course to object for the report
  * @param context         $context    The context of the course
@@ -48,11 +46,18 @@ function report_grouptool_extend_navigation_course($navigation, $course, $contex
     }
 
     $url = new moodle_url('/report/grouptool/index.php', ['id' => $course->id]);
-    $node = navigation_node::create(get_string('grouptool', 'report_grouptool'), $url, navigation_node::TYPE_SETTING,
+    $node = navigation_node::create(get_string('pluginname', 'report_grouptool'), $url, navigation_node::TYPE_SETTING,
         null, null, new pix_icon('i/report', get_string('grouptool', 'report_grouptool')));
     $navigation->add_node($node);
 
 }
+
+/**
+ * Adding Report Navigation
+ * @package report_grouptool
+ * @param global_navigation $nav
+ * @return void
+ */
 function report_grouptool_extend_navigation(global_navigation $nav) {
     return;
 }

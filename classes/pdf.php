@@ -17,7 +17,7 @@
 /**
  * Extending the moodle pdf class with a custom header and some helperfunctions for proper data-output.
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ require_once('../../lib/pdflib.php');
 /**
  * Extended pdf class with convenience methods for outputting Grouptool pdfs
  *
- * @package   mod_grouptool
+ * @package   report_grouptool
  * @author    Philipp Hager
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
