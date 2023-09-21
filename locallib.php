@@ -154,6 +154,7 @@ class report_grouptool {
                 $options[$grouping->id] = $grouping->name;
             }
         }
+        // $this->get_paramter_dropdowns($url,$groupingid,$groupid,$orientation);
         flush();
         $this->userlist_table($groupingid, $groupid);
     }
@@ -164,12 +165,16 @@ class report_grouptool {
      * @return void
      * @throws coding_exception
      */
-    protected function get_download_dropdown($url) {
+    protected function get_download_dropdown($url, $downloadurl) {
         global $OUTPUT;
+        // <button type="button" class="btn btn-primary">Primary</button>
         $downloadselect = $this->get_download_select($url);
         echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
-            $OUTPUT->render($downloadselect),
+            $OUTPUT->render($downloadselect).'&nbsp;'.
+            html_writer::tag('a', get_string('download', 'report_grouptool'),
+                ['class' => 'btn btn-primary', 'type' => 'button', 'href' => $downloadurl]),
             ['class' => 'centered grouptool_userlist_download']);
+
     }
     /**
      * Retunrs Dropdown Menus to select the paramters for download
@@ -277,7 +282,9 @@ class report_grouptool {
      */
     protected function get_download_select($url) {
         static $options = null;
-
+        // Use a different kind of Download
+        // Use Format parameter like in orientation
+        // Add Button
         if (!$options) {
             $options = [
                 GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
@@ -286,8 +293,8 @@ class report_grouptool {
                 GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool')
             ];
         }
-
-        return new single_select($url, 'format', $options, GROUPTOOL_TXT, false);
+        $param = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+        return new single_select($url, 'format', $options, $param, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -403,6 +410,14 @@ class report_grouptool {
                 $keys = array_keys($groupdata);
                 foreach ($keys as $key) {
                     $groupdata[$key]->queued = null;
+
+                    // TODO ANNE
+                    // TODO remove comment
+                    // if ($includequeues && $this->grouptool->use_queue) {
+                    // $attr = ['agrpid' => $groupdata[$key]->agrpid];
+                    // $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
+                    // }
+
                     if ($includequeues) {
                         $attr = ['agrpid' => $groupdata[$key]->agrpid];
                         $groupdata[$key]->queued = (array)$DB->get_records('grouptool_queued', $attr);
@@ -571,7 +586,11 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            echo $this->get_download_dropdown($downloadurl);
+            $format = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+            $url = new moodle_url($PAGE->url, [
+                'sesskey'     => sesskey()
+            ]);
+            echo $this->get_download_dropdown($url, new moodle_url($downloadurl, ['format' => $format]));
             // echo $this->get_download_links($downloadurl);
             flush();
         }

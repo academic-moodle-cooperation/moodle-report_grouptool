@@ -200,6 +200,7 @@ $string['deselect'] = 'Deselect';
 $string['determinismerror'] = 'The registration end can\'t be before the registration start or in the past.';
 $string['digits'] = 'Minimum digits';
 $string['disabled'] = 'Disabled';
+$string['download'] = 'Download';
 $string['download_txt'] = 'TXT';
 $string['download_ods'] = 'ODS';
 $string['download_options'] = 'Download as';
