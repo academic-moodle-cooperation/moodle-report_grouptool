@@ -578,11 +578,11 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            $format= optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+            $format = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
             $url = new moodle_url($PAGE->url, [
                 'sesskey'     => sesskey()
             ]);
-            echo $this->get_download_dropdown($url, new moodle_url($downloadurl,['format' => $format]));
+            echo $this->get_download_dropdown($url, new moodle_url($downloadurl, ['format' => $format]));
             // echo $this->get_download_links($downloadurl);
             flush();
         }
