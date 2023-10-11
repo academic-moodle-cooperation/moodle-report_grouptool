@@ -172,8 +172,9 @@ class report_grouptool {
         echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
             $OUTPUT->render($downloadselect).'&nbsp;'.
             html_writer::tag('a', get_string('download', 'report_grouptool'),
-                ['class' => 'btn btn-primary', 'type' => 'button', 'href' => $downloadurl]),
+                ['class' => 'btn btn-primary align-baseline', 'type' => 'button', 'href' => $downloadurl]),
             ['class' => 'centered grouptool_userlist_download']);
+        echo $OUTPUT->box(" ");
 
     }
     /**
