@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/pdflib.php');
 
 /**
  * This class helps to show reports for individual grouptools
+ * @author Anne Kreppenhofer
  * @package report_grouptool
  * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

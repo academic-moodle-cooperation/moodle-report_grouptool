@@ -52,6 +52,6 @@ class userlist_exported extends export {
      * @throws \coding_exception
      */
     public static function get_name() {
-        return get_string('eventuserlistexported', 'grouptool');
+        return get_string('eventuserlistexported', 'report_grouptool');
     }
 }

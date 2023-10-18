@@ -50,21 +50,26 @@ if (!isset($SESSION->report_grouptool)) {
 }
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    // collapse icon
+    if (!isset($SESSION->report_grouptool->collapse)) {
+        $SESSION->report_grouptool->collapse = 1;
+    }
     $iconcollapsed = html_writer::tag('span', '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>',
-        ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Expand"]);
+        ['class' => "icon-collapsed expanded-icon icon-no-margin p-2", 'title' => "Expand"]);
     $icon = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>',
-            ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
+        ['class' => "icon-expand expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
+
+    // collapse icon
+    //$onclick = '(function(){$(this).find("i").toggleClass("icon fa fa-chevron-right fa-fw").toggleClass("icon fa fa-chevron-down fa-fw");}';
     // Heading with collapse feature
-    echo $OUTPUT->heading(html_writer::tag('a', $iconcollapsed,
-         ['id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
+    echo $OUTPUT->heading(html_writer::tag('a', $icon.$iconcollapsed,
+         ['class' => 'btn','id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
          'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.
          ' '.html_writer::tag('a', format_string($grouptool->name),
          ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
-    echo $OUTPUT->box_start($classes = "collapse", $id = "collapse".$grouptool->coursemodule);
+    echo $OUTPUT->box_start($classes = "collapse show", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();
     echo $OUTPUT->box_end();
 }
-
+$PAGE->requires->js_call_amd('mod_report/collapse','onclick');
 echo $OUTPUT->footer();
 

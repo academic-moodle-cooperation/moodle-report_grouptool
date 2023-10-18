@@ -26,8 +26,6 @@
 require_once('../../config.php');
 
 require_once($CFG->dirroot.'/report/grouptool/locallib.php');
-// require_once($CFG->dirroot.'/mod/grouptool/locallib.php');
-
 
 $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('grouptool', $cmid);
@@ -37,8 +35,8 @@ $url = new moodle_url($CFG->wwwroot.'/report/grouptool/download.php', ['id' => $
 $PAGE->set_url($url);
 $instance = new report_grouptool($cmid);
 
-// require_login($cm->course, true, $cm);
-// require_capability('report/grouptool:export', $context);
+require_login($cm->course, true, $cm);
+require_capability('report/grouptool:export', $context);
 
 $groupingid = optional_param('groupingid', 0, PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
@@ -59,7 +57,7 @@ if (empty($cm->uservisible)) {
         // User cannot access the activity and they will not see it at all.
         $text = '';
     }
-    $notification = $OUTPUT->notification(get_string('conditions_prevent_access', 'grouptool').
+    $notification = $OUTPUT->notification(get_string('conditions_prevent_access', 'report_grouptool').
                                           html_writer::empty_tag('br').$text, 'error');
     echo $OUTPUT->header();
     echo $OUTPUT->box($notification, 'generalbox centered');

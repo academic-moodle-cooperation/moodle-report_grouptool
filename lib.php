@@ -16,11 +16,11 @@
 
 /**
  * This file contains the moodle hooks for the grouptool module.
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @author Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-// require_once($CFG->dirroot.'/report/grouptool/lib.php');
 
 /**
  * This function extends the navigation with the report items
