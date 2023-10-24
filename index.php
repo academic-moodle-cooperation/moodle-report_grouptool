@@ -57,7 +57,7 @@ foreach ($grouptools as $grouptool) {
     //    ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
     $collapsible = html_writer::tag('a', $iconcollapsed.$iconexpanded,
             ['id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
-        'aria-expanded' => "false", 'aria-controls' => "#collapse".$grouptool->coursemodule, 'class' => 'icons-collapse-expand']).' '.
+        'aria-expanded' => "false", 'aria-controls' => "#collapse".$grouptool->coursemodule, 'class' => 'btn icons-collapse-expand']).' '.
         ' '.html_writer::tag('a', format_string($grouptool->name),
         ['href' => new moodle_url('/mod/grouptool/view.php',  ['id' => $grouptool->coursemodule]), 'class' => 'text-truncate']);
     // Heading with collapse feature
