@@ -50,26 +50,22 @@ if (!isset($SESSION->report_grouptool)) {
 }
 foreach ($grouptools as $grouptool) {
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    if (!isset($SESSION->report_grouptool->collapse)) {
-        $SESSION->report_grouptool->collapse = 1;
-    }
-    $iconcollapsed = html_writer::tag('span', '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>',
-        ['class' => "icon-collapsed expanded-icon icon-no-margin p-2", 'title' => "Expand"]);
-    $icon = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>',
-        ['class' => "icon-expand expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
-
     // collapse icon
-    //$onclick = '(function(){$(this).find("i").toggleClass("icon fa fa-chevron-right fa-fw").toggleClass("icon fa fa-chevron-down fa-fw");}';
+    $iconcollapsed = html_writer::tag('span', '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>', ['class' => "collapsed-icon icon-no-margin  mr-1", 'title' => "Expand"]);
+    $iconexpanded = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw" aria-hidden="true"></i>', ['class' => "expanded-icon icon-no-margin  mr-1", 'title' => "Collapse"]);
+    // $icon = html_writer::tag('span', '<i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>',
+    //    ['class' => "expanded-icon icon-no-margin p-2", 'title' => "Collapse"]);
+    $collapsible = html_writer::tag('a', $iconcollapsed.$iconexpanded,
+            ['id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
+        'aria-expanded' => "false", 'aria-controls' => "#collapse".$grouptool->coursemodule, 'class' => 'icons-collapse-expand']).' '.
+        ' '.html_writer::tag('a', format_string($grouptool->name),
+        ['href' => new moodle_url('/mod/grouptool/view.php',  ['id' => $grouptool->coursemodule]), 'class' => 'text-truncate']);
     // Heading with collapse feature
-    echo $OUTPUT->heading(html_writer::tag('a', $icon.$iconcollapsed,
-         ['class' => 'btn','id' => 'collapse', 'data-toggle' => "collapse", 'href' => "#collapse".$grouptool->coursemodule, 'role' => "button",
-         'aria-expanded' => "false", 'aria-controls' => "collapseExample"]).' '.
-         ' '.html_writer::tag('a', format_string($grouptool->name),
-         ['href' => new moodle_url('/mod/grouptool/view.php', ['id' => $grouptool->coursemodule])]));
+    echo $OUTPUT->heading(html_writer::div($collapsible, 'd-flex'));
     echo $OUTPUT->box_start($classes = "collapse show", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();
     echo $OUTPUT->box_end();
 }
-$PAGE->requires->js_call_amd('mod_report/collapse','onclick');
+
 echo $OUTPUT->footer();
 
