@@ -28,7 +28,7 @@ namespace report_grouptool\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for report_configlog implementing null_provider.
+ * Privacy Subsystem for report_grouptool implementing null_provider.
  *
  * @author     Anne Kreppenhofer (annek03@univie.ac.at)
  * @copyright  2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
