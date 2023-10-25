@@ -21,4 +21,3 @@ Feature: Course report grouptool is not available if no grouptool course instanc
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
     Then I should not see "Grouptool"
-

@@ -25,4 +25,3 @@ Feature: Course report grouptool is only available if at least one grouptool cou
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
     Then I should see "Grouptool"
-
