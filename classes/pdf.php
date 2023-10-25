@@ -18,25 +18,26 @@
  * Extending the moodle pdf class with a custom header and some helperfunctions for proper data-output.
  *
  * @package   report_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace report_grouptool;
 
 use context_course;
-use report_grouptool\local\tests\grouptool;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../lib/pdflib.php');
+require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+
 
 /**
  * Extended pdf class with convenience methods for outputting Grouptool pdfs
  *
  * @package   report_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pdf extends \pdf {
@@ -111,7 +112,7 @@ class pdf extends \pdf {
                 $viewname);
         }
 
-        $this->useridentityfields = grouptool::get_useridentity_fields();
+        $this->useridentityfields = \report_grouptool::get_useridentity_fields();
         $this->setFontSubsetting(false);
 
         // Set orientation (P/L)!

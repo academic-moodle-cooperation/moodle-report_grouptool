@@ -75,5 +75,12 @@ $capabilities = [
             'manager' => CAP_ALLOW
         ]
     ],
+    'report/grouptool:register' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'student' => CAP_ALLOW
+        ]
+    ],
 ];
 
