@@ -162,7 +162,8 @@ class report_grouptool {
 
     /**
      * Returns the dropdown for each download option
-     * @param string $url Url of the Dowload link
+     * @param string $url Url of the download options
+     * @param moodle_url | string $downloadurl Url of the Download link
      * @return void
      * @throws coding_exception
      */
