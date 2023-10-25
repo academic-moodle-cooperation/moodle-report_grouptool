@@ -4,7 +4,7 @@ Grouptool Report
 This file is part of the report_grouptool plugin for Moodle - <http://moodle.org/>
 
 *Author:*    Anne Kreppenhofer
-
+ 
 *Copyright:* 2023 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
 
 *License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
