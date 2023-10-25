@@ -39,7 +39,6 @@ $string['download_xlsx'] = 'XLSX';
 $string['duedate'] = 'Registration end';
 $string['duedateno'] = 'No due date';
 $string['eventuserlistexported'] = 'Exported user-list';
-# $string['userlist'] = 'User-list';
 $string['free'] = 'Free';
 $string['group_not_in_grouping'] = 'Chosen group is not member of chosen grouping!';
 $string['groupoverview'] = 'Group overview';
