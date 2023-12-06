@@ -24,8 +24,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023102500;
-$plugin->release = "v4.2.0";       // User-friendly version number.
+$plugin->version = 2023102501;
+$plugin->release = "v4.3.0";       // User-friendly version number.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2023042400;      // Requires this Moodle version!
 $plugin->component = 'report_grouptool';    // To check on upgrade, that module sits in correct place.

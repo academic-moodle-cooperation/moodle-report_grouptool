@@ -33,7 +33,7 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
     'report/grouptool:export' => [
         'captype' => 'read',
@@ -42,7 +42,7 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
 
     'report/grouptool:view_groups' => [
@@ -53,7 +53,7 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
 
     'report/grouptool:view_regs_group_view' => [
@@ -63,7 +63,7 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
 
     'report/grouptool:view_regs_course_view' => [
@@ -73,14 +73,14 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
     'report/grouptool:register' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => [
             'student' => CAP_ALLOW,
-        ]
+        ],
     ],
 ];
 
