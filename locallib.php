@@ -145,7 +145,7 @@ class report_grouptool {
             'sesskey'     => sesskey(),
             'groupid'     => $groupid,
             'groupingid'  => $groupingid,
-            'orientation' => $orientation
+            'orientation' => $orientation,
         ]);
 
         $groupings = groups_get_all_groupings($this->course->id);
@@ -193,7 +193,7 @@ class report_grouptool {
                 GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
                 GROUPTOOL_XLSX => get_string('download_xlsx', 'report_grouptool'),
                 GROUPTOOL_PDF => get_string('download_pdf', 'report_grouptool'),
-                GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool')
+                GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool'),
             ];
         }
         $param = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
@@ -408,7 +408,7 @@ class report_grouptool {
                     'groupingid'  => $groupingid,
                     'groupid'     => $groupid,
                     'orientation' => $orientation,
-                    'sesskey'     => sesskey()
+                    'sesskey'     => sesskey(),
                 ]);
         }
 
@@ -482,7 +482,7 @@ class report_grouptool {
         if (!$onlydata) {
             $format = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
             $url = new moodle_url($PAGE->url, [
-                'sesskey'     => sesskey()
+                'sesskey'     => sesskey(),
             ]);
             echo $this->get_download_dropdown($url, new moodle_url($downloadurl, ['format' => $format]));
             flush();
@@ -601,7 +601,7 @@ class report_grouptool {
 
                     $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', [
                         'id'     => $user->id,
-                        'course' => $this->course->id
+                        'course' => $this->course->id,
                     ]);
                     if (!in_array('picture', $collapsed)) {
                         $picture = html_writer::link($userlink, $OUTPUT->user_picture($user));
@@ -631,7 +631,7 @@ class report_grouptool {
                             foreach ($user->regs as $reg) {
                                 $grouplink = new moodle_url($PAGE->url, [
                                     'tab'     => 'overview',
-                                    'groupid' => $groupinfo[$reg]->id
+                                    'groupid' => $groupinfo[$reg]->id,
                                 ]);
                                 $registrations[] = html_writer::link($grouplink, $groupinfo[$reg]->name);
                             }
@@ -649,7 +649,7 @@ class report_grouptool {
                             foreach ($user->queued as $queue) {
                                 $grouplink = new moodle_url($PAGE->url, [
                                     'tab'     => 'overview',
-                                    'groupid' => $groupinfo[$queue]->id
+                                    'groupid' => $groupinfo[$queue]->id,
                                 ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
@@ -732,7 +732,7 @@ class report_grouptool {
                             }
                             $queueentries[] = [
                                 'rank' => $rank,
-                                'name' => $groupinfo[$queue]->name
+                                'name' => $groupinfo[$queue]->name,
                             ];
                         }
                         $row['queues'] = $queueentries;
@@ -947,7 +947,7 @@ class report_grouptool {
         } else if (!empty($data)) { // It's an active-group-id, so we gotta get the queue data!
             $params = [
                 'agrpid' => $data,
-                'userid' => !empty($userid) ? $userid : $USER->id
+                'userid' => !empty($userid) ? $userid : $USER->id,
             ];
             $sql = "SELECT count(b.id) AS rank
                       FROM {grouptool_queued} a
@@ -972,7 +972,7 @@ class report_grouptool {
     public function download_userlist_txt($groupid=0, $groupingid=0) {
         ob_start();
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
         $useridentityfields = self::get_useridentity_fields();
 
@@ -1090,7 +1090,7 @@ class report_grouptool {
 
         require_once($CFG->libdir . "/excellib.class.php");
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
 
         $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
@@ -1137,7 +1137,7 @@ class report_grouptool {
                 'bold' => 1,
                 'HAlign' => 'center',
                 'bottom' => 2,
-                'VAlign' => 'vcenter'
+                'VAlign' => 'vcenter',
             ];
             $headlineformat = $workbook->add_format($headlineprop);
             $headlineformat->set_right(1);
@@ -1157,7 +1157,7 @@ class report_grouptool {
 
             $regentryprop = [
                 'size' => 10,
-                'align' => 'left'
+                'align' => 'left',
             ];
             $queueentryprop = $regentryprop;
             $queueentryprop['italic'] = true;
@@ -1202,7 +1202,7 @@ class report_grouptool {
                 'email'         => 35,
                 'registrations' => 47,
                 'queues_grp'    => 47,
-                'queues_rank'   => 7.5
+                'queues_rank'   => 7.5,
             ]; // Unit: mm!
 
             foreach ($data as $key => $user) {
@@ -1374,7 +1374,7 @@ class report_grouptool {
     public function download_userlist_pdf($groupid=0, $groupingid=0) {
         $data = $this->userlist_table($groupingid, $groupid, true);
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $timeavailable = $this->grouptool->timeavailable;
         $grouptoolname = $this->grouptool->name;
         $timedue = $this->grouptool->timedue;
@@ -1455,7 +1455,7 @@ class report_grouptool {
 
         require_once($CFG->libdir . "/odslib.class.php");
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
 
         $workbook = new MoodleODSWorkbook("-");

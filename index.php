@@ -66,11 +66,13 @@ foreach ($grouptools as $grouptool) {
                 'role' => "button",
                 'aria-expanded' => "false",
                 'aria-controls' => "#collapse".$grouptool->coursemodule,
-                'class' => 'btn icons-collapse-expand']).' '.' '.
+                'class' => 'btn icons-collapse-expand',
+                ]).' '.' '.
         html_writer::tag('a', format_string($grouptool->name),
         ['href' => new moodle_url('/mod/grouptool/view.php',
             ['id' => $grouptool->coursemodule]),
-            'class' => 'text-truncate']);
+            'class' => 'text-truncate',
+            ]);
 
     // Heading with collapse feature
     echo $OUTPUT->heading(html_writer::div($collapsible, 'd-flex'));

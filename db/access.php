@@ -32,7 +32,7 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ]
     ],
     'report/grouptool:export' => [
@@ -41,7 +41,7 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ]
     ],
 
@@ -52,7 +52,7 @@ $capabilities = [
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ]
     ],
 
@@ -62,7 +62,7 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ]
     ],
 
@@ -72,14 +72,14 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ]
     ],
     'report/grouptool:register' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => [
-            'student' => CAP_ALLOW
+            'student' => CAP_ALLOW,
         ]
     ],
 ];

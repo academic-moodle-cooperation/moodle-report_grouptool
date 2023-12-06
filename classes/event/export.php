@@ -94,7 +94,7 @@ abstract class export extends \core\event\base {
         return new \moodle_url("/report/$this->objecttable/download.php", [
             'id' => $this->contextinstanceid,
             'tab' => $this->exportsubject,
-            'format' => $this->data['other']['format']
+            'format' => $this->data['other']['format'],
         ]);
     }
 

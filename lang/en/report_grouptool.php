@@ -56,6 +56,7 @@ $string['orientation'] = 'PDF-orientation';
 $string['overview'] = 'Overview';
 $string['pluginname'] = 'Grouptool report';
 $string['portrait'] = 'Portrait';
+$string['privacy:metadata'] = 'The Grouptool reports plugin does not store any personal data.';
 $string['queue'] = 'Queue';
 $string['queued'] = 'Queued';
 $string['queues'] = 'Queues';
@@ -72,3 +73,4 @@ $string['status_help'] = '<ul>
 $string['switched_to_all_groups'] = 'Changed group filter to all groups!';
 $string['total'] = 'Total';
 $string['userlist'] = 'User list';
+
