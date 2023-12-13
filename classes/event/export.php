@@ -18,8 +18,8 @@
  * The report_grouptool\export event base class.
  *
  * @package   report_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
  * The \report_grouptool\export base class holds the common logic for the export events
  *
  * @package   report_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class export extends \core\event\base {
@@ -94,7 +94,7 @@ abstract class export extends \core\event\base {
         return new \moodle_url("/report/$this->objecttable/download.php", [
             'id' => $this->contextinstanceid,
             'tab' => $this->exportsubject,
-            'format' => $this->data['other']['format']
+            'format' => $this->data['other']['format'],
         ]);
     }
 
