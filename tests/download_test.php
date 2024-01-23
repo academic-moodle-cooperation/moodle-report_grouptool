@@ -28,7 +28,9 @@ namespace report_grouptool\local\tests;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/report/grouptool/locallib.php');
+require_once($CFG->dirroot . '/report/grouptool/download.php');
+require_once($CFG->dirroot . '/mod/grouptool/locallib.php');
+
 
 /**
  * Unit Tests for report/grouptool's download! TODO: finish these unit tests here!
@@ -79,4 +81,15 @@ class report_grouptool_download_testcase extends base {
             'This test has not been implemented yet.'
         );
     }
+    /**
+     * Test that downloading a grouptool as pdf works.
+     *
+     */
+    public function test_download_all_formats() {
+        self::markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+
 }
