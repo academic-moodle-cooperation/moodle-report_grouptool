@@ -19,12 +19,12 @@
  *
  * @package       report_grouptool
  * @author        Anne Kreppenhofer (annek03@univie.ac.at)
- * @copyright     2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2024 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023121300;
+$plugin->version = 2024012301;
 $plugin->release = "v4.3.0";       // User-friendly version number.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2023042400;      // Requires this Moodle version!
