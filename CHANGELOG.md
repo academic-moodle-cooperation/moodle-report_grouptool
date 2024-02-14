@@ -1,8 +1,7 @@
 CHANGELOG
 =========
 
-4.2.0 (2023-08-29)
+4.2.0 (2023-10-13)
 ------------------
 
-* [FEATURE] #7550 - site information
-* [FEATURE] #7549 - repository structure
+* First release for Moodle 4.2

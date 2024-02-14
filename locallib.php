@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- *
- * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
 require_once($CFG->dirroot.'/mod/grouptool/definitions.php');
@@ -29,6 +25,14 @@ require_once($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/grade/grade_grade.php');
 require_once($CFG->libdir.'/pdflib.php');
+
+/**
+ * This class helps to show reports for individual grouptools
+ * @author Anne Kreppenhofer
+ * @package report_grouptool
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_grouptool {
 
     /** @var object */
@@ -131,7 +135,7 @@ class report_grouptool {
      * @throws required_capability_exception
      */
     public function view_userlist() {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
 
         $groupid = optional_param('groupid', 0, PARAM_INT);
         $groupingid = optional_param('groupingid', 0, PARAM_INT);
@@ -141,7 +145,7 @@ class report_grouptool {
             'sesskey'     => sesskey(),
             'groupid'     => $groupid,
             'groupingid'  => $groupingid,
-            'orientation' => $orientation
+            'orientation' => $orientation,
         ]);
 
         $groupings = groups_get_all_groupings($this->course->id);
@@ -151,104 +155,49 @@ class report_grouptool {
                 $options[$grouping->id] = $grouping->name;
             }
         }
+        // $this->get_paramter_dropdowns($url,$groupingid,$groupid,$orientation);
         flush();
         $this->userlist_table($groupingid, $groupid);
     }
+
     /**
-     * Retunrs Dropdown Menus to select the paramters for download
-     * @param $url
-     * @param $groupingid
-     * @param $groupid
-     * @param $orientation
+     * Returns the dropdown for each download option
+     * @param string $url Url of the download options
+     * @param moodle_url $downloadurl Url of the Download link
      * @return void
      * @throws coding_exception
-     * @throws dml_exception
-     * @throws required_capability_exception
      */
-    protected function get_paramter_dropdowns($url, $groupingid, $groupid, $orientation) {
-
-        $groupingselect = $this->get_grouping_select($url, $groupingid);
-        $groupselect = $this->get_groups_select($url, $groupingid, $groupid);
-        $orientationselect = $this->get_orientation_select($url, $orientation);
-
-        echo html_writer::tag('div', get_string('grouping', 'group').'&nbsp;'.
-                $OUTPUT->render($groupingselect),
-                ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('group', 'group').'&nbsp;'.
-                $OUTPUT->render($groupselect),
-                ['class' => 'centered grouptool_userlist_filter']).
-            html_writer::tag('div', get_string('orientation', 'grouptool').'&nbsp;'.
-                $OUTPUT->render($orientationselect),
-                ['class' => 'centered grouptool_userlist_filter']);
-    }
-    /**
-     * Returns a single select to change currently selected grouping.
-     *
-     * @param moodle_url $url Base URL to use
-     * @param int $groupingid Currently active grouping ID or 0
-     * @return single_select
-     * @throws coding_exception
-     */
-    protected function get_grouping_select($url, $groupingid) {
-        $groupings = groups_get_all_groupings($this->course->id);
-        $options = [0 => get_string('all')];
-        if (count($groupings)) {
-            foreach ($groupings as $grouping) {
-                $options[$grouping->id] = $grouping->name;
-            }
-        }
-        return new single_select($url, 'groupingid', $options, $groupingid, false);
-    }
-    /**
-     * Returns a single select to change currently selected group.
-     *
-     * @param moodle_url $url Base URL to use
-     * @param int $groupingid Currently active grouping ID or 0
-     * @param int $groupid Currently active group ID or 0
-     * @return single_select
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws required_capability_exception
-     */
-    protected function get_groups_select($url, $groupingid, $groupid) {
+    protected function get_download_dropdown($url, $downloadurl) {
         global $OUTPUT;
+        // <button type="button" class="btn btn-primary">Primary</button>
+        $downloadselect = $this->get_download_select($url);
+        echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
+            $OUTPUT->render($downloadselect).'&nbsp;'.
+            html_writer::tag('a', get_string('download', 'report_grouptool'),
+                ['class' => 'btn btn-primary align-baseline', 'type' => 'button', 'href' => $downloadurl]),
+            ['class' => 'centered grouptool_userlist_download']);
+        echo $OUTPUT->box(" ");
 
-        $groups = $this->get_active_groups(false, false, 0, 0, $groupingid);
-        $options = [0 => get_string('all')];
-        if (count($groups)) {
-            foreach ($groups as $group) {
-                $options[$group->id] = $group->name;
-            }
-        }
-        if (!key_exists($groupid, $options)) {
-            $groupid = 0;
-            $url->param('groupid', 0);
-            echo $OUTPUT->box($OUTPUT->notification(get_string('group_not_in_grouping', 'grouptool').
-                html_writer::empty_tag('br').
-                get_string('switched_to_all_groups', 'report_grouptool'),
-                \core\output\notification::NOTIFY_ERROR), 'generalbox centered');
-        }
-        return new single_select($url, 'groupid', $options, $groupid, false);
     }
     /**
      * Returns a single select to change currently selected page-orientation.
      *
      * @param moodle_url $url Base URL to use
-     * @param int $orientation Currently active orientation
      * @return single_select
      * @throws coding_exception
      */
-    protected function get_orientation_select($url, $orientation) {
+    protected function get_download_select($url) {
         static $options = null;
-
         if (!$options) {
             $options = [
-                0 => get_string('portrait', 'report_grouptool'),
-                1 => get_string('landscape', 'report_grouptool')
+                GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
+                GROUPTOOL_XLSX => get_string('download_xlsx', 'report_grouptool'),
+                GROUPTOOL_PDF => get_string('download_pdf', 'report_grouptool'),
+                GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool'),
             ];
         }
-
-        return new single_select($url, 'orientation', $options, $orientation, false);
+        $param = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+        return new single_select($url, 'format', $options, $param, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -269,7 +218,7 @@ class report_grouptool {
     public function get_active_groups($includeregs=false, $includequeues=false, $agrpid=0, $groupid=0, $groupingid=0,
                                       $indexbygroup=true, $includeinactive = false, $ignoregtinstance = false) {
         global $DB;
-        // require_capability('report/grouptool:view_groups', $this->context);
+        require_capability('report/grouptool:view_groups', $this->context);
 
         if (!$ignoregtinstance) {
             $params = ['grouptoolid' => $this->cm->instance];
@@ -459,13 +408,12 @@ class report_grouptool {
                     'groupingid'  => $groupingid,
                     'groupid'     => $groupid,
                     'orientation' => $orientation,
-                    'sesskey'     => sesskey()
+                    'sesskey'     => sesskey(),
                 ]);
         }
 
         // Get all ppl that are allowed to register!
-        // list($esql, $params) = get_enrolled_sql($this->context, 'report/grouptool:register');
-        list($esql, $params) = get_enrolled_sql($this->context);
+        list($esql, $params) = get_enrolled_sql($this->context, 'report/grouptool:register');
         $sql = "SELECT u.id
                   FROM {user} u
              LEFT JOIN ($esql) eu ON eu.id=u.id
@@ -532,7 +480,11 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            echo $this->get_download_links($downloadurl);
+            $format = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+            $url = new moodle_url($PAGE->url, [
+                'sesskey'     => sesskey(),
+            ]);
+            echo $this->get_download_dropdown($url, new moodle_url($downloadurl, ['format' => $format]));
             flush();
         }
 
@@ -649,7 +601,7 @@ class report_grouptool {
 
                     $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', [
                         'id'     => $user->id,
-                        'course' => $this->course->id
+                        'course' => $this->course->id,
                     ]);
                     if (!in_array('picture', $collapsed)) {
                         $picture = html_writer::link($userlink, $OUTPUT->user_picture($user));
@@ -679,7 +631,7 @@ class report_grouptool {
                             foreach ($user->regs as $reg) {
                                 $grouplink = new moodle_url($PAGE->url, [
                                     'tab'     => 'overview',
-                                    'groupid' => $groupinfo[$reg]->id
+                                    'groupid' => $groupinfo[$reg]->id,
                                 ]);
                                 $registrations[] = html_writer::link($grouplink, $groupinfo[$reg]->name);
                             }
@@ -697,7 +649,7 @@ class report_grouptool {
                             foreach ($user->queued as $queue) {
                                 $grouplink = new moodle_url($PAGE->url, [
                                     'tab'     => 'overview',
-                                    'groupid' => $groupinfo[$queue]->id
+                                    'groupid' => $groupinfo[$queue]->id,
                                 ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
@@ -780,7 +732,7 @@ class report_grouptool {
                             }
                             $queueentries[] = [
                                 'rank' => $rank,
-                                'name' => $groupinfo[$queue]->name
+                                'name' => $groupinfo[$queue]->name,
                             ];
                         }
                         $row['queues'] = $queueentries;
@@ -824,40 +776,6 @@ class report_grouptool {
             $useridentity[$identifier] = \core_user\fields::get_display_name($identifier);
         }
         return $useridentity;
-    }
-    /**
-     * Returns nice download links for all formats based on downloadurl and groupid
-     *
-     * @param moodle_url $downloadurl The base download URL to use
-     * @param int $groupid (optional) ID of group to use for the download or 0 for all groups download
-     * @return string HTML snippet with download links encapsulated in DIV
-     * @throws coding_exception
-     * @throws moodle_exception
-     */
-    protected function get_download_links($downloadurl, $groupid = 0) {
-        if (has_capability('report/grouptool:export', $this->context)) {
-            $class = 'download';
-            if ($groupid) {
-                $downloadurl = new moodle_url($downloadurl, ['groupid' => $groupid]);
-                $downloadtxt = get_string('download');
-            } else {
-                $downloadtxt = get_string('downloadall');
-                $class .= ' all';
-            }
-
-            $txturl = new moodle_url($downloadurl, ['format' => GROUPTOOL_TXT]);
-            $xlsxurl = new moodle_url($downloadurl, ['format' => GROUPTOOL_XLSX]);
-            $pdfurl = new moodle_url($downloadurl, ['format' => GROUPTOOL_PDF]);
-            $odsurl = new moodle_url($downloadurl, ['format' => GROUPTOOL_ODS]);
-            $downloadlinks = html_writer::tag('span', $downloadtxt.":", ['class' => 'title']).'&nbsp;'.
-                html_writer::link($txturl, '.TXT').'&nbsp;'.
-                html_writer::link($xlsxurl, '.XLSX').'&nbsp;'.
-                html_writer::link($pdfurl, '.PDF').'&nbsp;'.
-                html_writer::link($odsurl, '.ODS');
-            return html_writer::tag('div', $downloadlinks, ['class' => $class]);
-        } else {
-            return '';
-        }
     }
     /**
      * get information about particular users with their registrations/queues
@@ -1029,7 +947,7 @@ class report_grouptool {
         } else if (!empty($data)) { // It's an active-group-id, so we gotta get the queue data!
             $params = [
                 'agrpid' => $data,
-                'userid' => !empty($userid) ? $userid : $USER->id
+                'userid' => !empty($userid) ? $userid : $USER->id,
             ];
             $sql = "SELECT count(b.id) AS rank
                       FROM {grouptool_queued} a
@@ -1040,269 +958,6 @@ class report_grouptool {
         }
 
         return $DB->count_records_sql($sql, $params);
-    }
-    /**
-     * outputs generated pdf-file for overview (forces download)
-     *
-     * @param int $groupid optional get only this group
-     * @param int $groupingid optional get only this grouping
-     * @param bool $includeinactive optional include inactive groups too!
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws required_capability_exception
-     */
-    public function download_overview_pdf($groupid=0, $groupingid=0, $includeinactive=false) {
-        $data = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
-
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
-        $timeavailable = $this->grouptool->timeavailable;
-        $grouptoolname = $this->grouptool->name;
-        $timedue = $this->grouptool->timedue;
-
-        if (!empty($groupid)) {
-            $viewname = groups_get_group_name($groupid);
-        } else {
-            if (!empty($groupingid)) {
-                $viewname = groups_get_grouping_name($groupingid);
-            } else {
-                $viewname = get_string('all').' '.get_string('groups');
-            }
-        }
-
-        $pdf = new \mod_grouptool\pdf('overview', $coursename, $grouptoolname, $timeavailable, $timedue,
-            $viewname);
-
-        if (count($data) > 0) {
-
-            foreach ($data as $group) {
-                $groupname = $group->name;
-                $groupinfo = get_string('total').' '.$group->total.' / '.
-                    get_string('registered', 'report_grouptool').' '.$group->registered.' / '.
-                    get_string('queued', 'report_grouptool').' '.$group->queued.' / '.
-                    get_string('free', 'report_grouptool').' '.$group->free;
-                $regdata = $group->reg_data;
-                $queuedata = $group->queue_data;
-                $mregdata = isset($group->mreg_data) ? $group->mreg_data : [];
-                $pdf->add_grp_overview($groupname, $groupinfo, $regdata, $queuedata, $mregdata);
-                $pdf->MultiCell(0, $pdf->getLastH(), '', 'B', 'L', false, 1, null, null,
-                    true, 1, true, false, $pdf->getLastH(), 'M', true);
-                $pdf->MultiCell(0, $pdf->getLastH(), '', 'T', 'L', false, 1, null, null,
-                    true, 1, true, false, $pdf->getLastH(), 'M', true);
-            }
-            $pdf->SetFontSize(8);
-            $pdf->MultiCell(0, $pdf->getLastH(), get_string('status', 'report_grouptool'), '', 'L',
-                false, 1, null, null, true, 1, true, false, $pdf->getLastH(),
-                'M', true);
-            foreach (explode("</li>", get_string('status_help', 'report_grouptool')) as $legendline) {
-                $pdf->MultiCell(0, $pdf->getLastH(), strip_tags($legendline), '', 'L', false, 1,
-                    null, null, true, 1, true, false, $pdf->getLastH(),
-                    'M', true);
-            }
-        } else {
-            $pdf->MultiCell(0, $pdf->getLastH(), get_string('no_data_to_display', 'report_grouptool'), 'B',
-                'LRTB', false, 1, null, null, true, 1, true, false,
-                $pdf->getLastH(), 'M', true);
-        }
-
-        if (!empty($groupid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
-        } else if (!empty($groupingid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
-        } else {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'report_grouptool');
-        }
-        $filename = clean_filename("$filename.pdf");
-        $pdf->Output($filename, 'D');
-        exit();
-    }
-
-    /**
-     * returns raw data for overview
-     *
-     * @param int $groupid optional get only this group
-     * @param int $groupingid optional get only this grouping
-     * @param bool $includeinactive optional include inactive groups too!
-     * @return array|int|string raw data
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws required_capability_exception
-     */
-    public function download_overview_raw($groupid=0, $groupingid=0, $includeinactive=false) {
-        return $this->group_overview_table($groupid, $groupingid, true, $includeinactive);
-    }
-
-    /**
-     * outputs generated txt-file for overview (forces download)
-     *
-     * @param int $groupid optional get only this group
-     * @param int $groupingid optional get only this grouping
-     * @param bool $includeinactive optional include inactive groups too!
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws required_capability_exception
-     */
-    public function download_overview_txt($groupid=0, $groupingid=0, $includeinactive=false) {
-        ob_start();
-        $lines = [];
-        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
-        if (count($groups) > 0) {
-            $lines[] = "*** ".get_string('status', 'report_grouptool')."\n";
-            foreach (explode("</li>", get_string('status_help', 'report_grouptool')) as $legendline) {
-                $lines[] = "***\t".strip_tags($legendline);
-            }
-            $lines[] = "";
-
-            foreach ($groups as $group) {
-                $lines[] = $group->name;
-                $lines[] = "\t".get_string('total').' '.$group->total." / ".
-                    get_string('registered', 'report_grouptool').' '.$group->registered." / ".
-                    get_string('queued', 'report_grouptool').' '.$group->queued." / ".
-                    get_string('free', 'report_grouptool').' '.$group->free;
-                if (isset($group->mreg_data)) {
-                    $mregs = count($group->mreg_data);
-                } else {
-                    $mregs = 0;
-                }
-                if ($group->registered > 0) {
-                    $lines[] = "\t".get_string('registrations', 'report_grouptool');
-                    foreach ($group->reg_data as $reg) {
-                        $lines[] = "\t\t".$reg['status']."\t".$reg['name'].
-                            self::get_useridentity_values_for_txt($reg['useridentityvalues']);
-                    }
-                } else if ($mregs == 0) {
-                    $lines[] = "\t\t--".get_string('no_registrations', 'report_grouptool')."--";
-                }
-                if ($mregs >= 1) {
-                    foreach ($group->mreg_data as $mreg) {
-                        $lines[] = "\t\t?\t".$mreg['name']."\t".
-                            self::get_useridentity_values_for_txt($mreg['useridentityvalues']);
-                    }
-                }
-                if ($group->queued > 0) {
-                    $lines[] = "\t".get_string('queue', 'report_grouptool');
-                    foreach ($group->queue_data as $queue) {
-                        $lines[] = "\t\t".$queue['rank']."\t".$queue['name']."\t".
-                            self::get_useridentity_values_for_txt($queue['useridentityvalues']);
-                    }
-                } else {
-                    $lines[] = "\t\t--".get_string('nobody_queued', 'report_grouptool')."--";
-                }
-                $lines[] = "";
-            }
-        } else {
-            $lines[] = get_string('no_data_to_display', 'report_grouptool');
-        }
-        $filecontent = implode(GROUPTOOL_NL, $lines);
-
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
-        $grouptoolname = $this->grouptool->name;
-
-        if (!empty($groupid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
-        } else if (!empty($groupingid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
-        } else {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').'_'.get_string('overview', 'report_grouptool');
-        }
-        $filename = clean_filename("$filename.txt");
-        ob_clean();
-        header('Content-Type: text/plain');
-        header('Content-Length: ' . strlen($filecontent));
-        header('Content-Disposition: attachment; filename="'.str_replace([' ', '"'], ['_', ''], $filename).
-            '"; filename*="'.rawurlencode($filename).'"');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Encoding: utf-8');
-        echo $filecontent;
-    }
-    /**
-     * outputs generated ods-file for overview (forces download)
-     *
-     * @param int $groupid optional get only this group
-     * @param int $groupingid optional get only this grouping
-     * @param bool $includeinactive optional include inactive groups too!
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws required_capability_exception
-     */
-    public function download_overview_ods($groupid=0, $groupingid=0, $includeinactive=false) {
-        global $CFG;
-
-        require_once($CFG->libdir . "/odslib.class.php");
-
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
-        $grouptoolname = $this->grouptool->name;
-
-        if (!empty($groupid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.get_string('overview', 'report_grouptool');
-        } else if (!empty($groupingid)) {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.get_string('overview', 'report_grouptool');
-        } else {
-            $filename = $coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'report_grouptool');
-        }
-        $filename = clean_filename("$filename.ods");
-        $workbook = new MoodleODSWorkbook("-");
-
-        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
-
-        $this->overview_fill_workbook($workbook, $groups);
-
-        $workbook->send($filename);
-        $workbook->close();
-    }
-
-    /**
-     * outputs generated xlsx-file for overview (forces download)
-     *
-     * @param int $groupid optional get only this group
-     * @param int $groupingid optional get only this grouping
-     * @param bool $includeinactive optional include inactive groups too!
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
-     * @throws required_capability_exception
-     */
-    public function download_overview_xlsx($groupid = 0, $groupingid = 0, $includeinactive=false) {
-        global $CFG;
-
-        require_once($CFG->libdir . "/excellib.class.php");
-
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
-        $grouptoolname = $this->grouptool->name;
-
-        if (!empty($groupid)) {
-            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
-                groups_get_group_name($groupid).'_'.
-                get_string('overview', 'report_grouptool'));
-        } else if (!empty($groupingid)) {
-            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
-                groups_get_grouping_name($groupingid).'_'.
-                get_string('overview', 'report_grouptool'));
-        } else {
-            $filename = clean_filename($coursename . '_' . $grouptoolname . '_' .
-                get_string('group').' '.get_string('overview', 'report_grouptool'));
-        }
-        $filename = clean_filename("$filename.xlsx");
-        $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
-
-        $groups = $this->group_overview_table($groupingid, $groupid, true, $includeinactive);
-
-        $this->overview_fill_workbook($workbook, $groups);
-
-        $workbook->send($filename);
-        $workbook->close();
     }
     /**
      * outputs generated txt-file for userlist (forces download)
@@ -1317,7 +972,7 @@ class report_grouptool {
     public function download_userlist_txt($groupid=0, $groupingid=0) {
         ob_start();
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
         $useridentityfields = self::get_useridentity_fields();
 
@@ -1435,7 +1090,7 @@ class report_grouptool {
 
         require_once($CFG->libdir . "/excellib.class.php");
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
 
         $workbook = new MoodleExcelWorkbook("-", 'Excel2007');
@@ -1482,7 +1137,7 @@ class report_grouptool {
                 'bold' => 1,
                 'HAlign' => 'center',
                 'bottom' => 2,
-                'VAlign' => 'vcenter'
+                'VAlign' => 'vcenter',
             ];
             $headlineformat = $workbook->add_format($headlineprop);
             $headlineformat->set_right(1);
@@ -1502,7 +1157,7 @@ class report_grouptool {
 
             $regentryprop = [
                 'size' => 10,
-                'align' => 'left'
+                'align' => 'left',
             ];
             $queueentryprop = $regentryprop;
             $queueentryprop['italic'] = true;
@@ -1547,7 +1202,7 @@ class report_grouptool {
                 'email'         => 35,
                 'registrations' => 47,
                 'queues_grp'    => 47,
-                'queues_rank'   => 7.5
+                'queues_rank'   => 7.5,
             ]; // Unit: mm!
 
             foreach ($data as $key => $user) {
@@ -1719,7 +1374,7 @@ class report_grouptool {
     public function download_userlist_pdf($groupid=0, $groupingid=0) {
         $data = $this->userlist_table($groupingid, $groupid, true);
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $timeavailable = $this->grouptool->timeavailable;
         $grouptoolname = $this->grouptool->name;
         $timedue = $this->grouptool->timedue;
@@ -1800,7 +1455,7 @@ class report_grouptool {
 
         require_once($CFG->libdir . "/odslib.class.php");
 
-        $coursename = format_string($this->course->fullname, true, array('context' => context_module::instance($this->cm->id)));
+        $coursename = format_string($this->course->fullname, true, ['context' => context_module::instance($this->cm->id)]);
         $grouptoolname = $this->grouptool->name;
 
         $workbook = new MoodleODSWorkbook("-");

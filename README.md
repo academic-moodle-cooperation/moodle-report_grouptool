@@ -4,7 +4,7 @@ Grouptool Report
 This file is part of the report_grouptool plugin for Moodle - <http://moodle.org/>
 
 *Author:*    Anne Kreppenhofer
-
+ 
 *Copyright:* 2023 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
 
 *License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
@@ -17,21 +17,14 @@ The Grouptool Report is an extension to the [Grouptool
 module](https://academic-moodle-cooperation.org/module/grouptool/). It gives the teacher an overview over all 
 participants in each grouptool and the option to export them as lists.
 
-
-Example
--------
-
-
 Requirements
 ------------
-
-
-
+To use this extension the module grouptool is necessary
 
 Installation
 ------------
 
-* Copy the module code directly to the report/grouptool directory.
+* Copy the report code directly to the report/grouptool directory.
 
 * Log into Moodle as administrator.
 

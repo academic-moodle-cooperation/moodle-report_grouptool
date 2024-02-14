@@ -19,7 +19,7 @@
  *
  * @package   report_grouptool
  * @author    Anne Kreppenhofer
- * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright 2024 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,8 +32,8 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
     ],
     'report/grouptool:export' => [
         'captype' => 'read',
@@ -41,8 +41,8 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
     ],
 
     'report/grouptool:view_groups' => [
@@ -52,8 +52,8 @@ $capabilities = [
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
     ],
 
     'report/grouptool:view_regs_group_view' => [
@@ -62,8 +62,8 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
     ],
 
     'report/grouptool:view_regs_course_view' => [
@@ -72,8 +72,15 @@ $capabilities = [
         'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    'report/grouptool:register' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => [
+            'student' => CAP_ALLOW,
+        ],
     ],
 ];
 

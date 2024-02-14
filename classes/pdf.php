@@ -17,26 +17,27 @@
 /**
  * Extending the moodle pdf class with a custom header and some helperfunctions for proper data-output.
  *
- * @package   mod_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package   report_grouptool
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace report_grouptool;
 
 use context_course;
-use report_grouptool\local\tests\grouptool;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../lib/pdflib.php');
+require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+
 
 /**
  * Extended pdf class with convenience methods for outputting Grouptool pdfs
  *
- * @package   mod_grouptool
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package   report_grouptool
+ * @author    Anne Kreppenhofer
+ * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pdf extends \pdf {
@@ -111,7 +112,7 @@ class pdf extends \pdf {
                 $viewname);
         }
 
-        $this->useridentityfields = grouptool::get_useridentity_fields();
+        $this->useridentityfields = \report_grouptool::get_useridentity_fields();
         $this->setFontSubsetting(false);
 
         // Set orientation (P/L)!
@@ -619,7 +620,7 @@ class pdf extends \pdf {
             'identity' => $this->calculate_identitycolumn_width(0.375, 1.5),
             'email' => $this->calculate_identitycolumn_width(0.375, 1.5) * 1.5,
             'registrations' => 0.225,
-            'queues' => 0.175
+            'queues' => 0.175,
         ];
         $totalwidth = array_sum($basicwidths);
         $colapsedwidth = $totalwidth;
