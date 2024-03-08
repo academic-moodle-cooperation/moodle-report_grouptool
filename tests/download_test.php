@@ -28,8 +28,8 @@ namespace report_grouptool\local\tests;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/report/grouptool/download.php');
-require_once($CFG->dirroot . '/mod/grouptool/locallib.php');
+// require_once($CFG->dirroot . '/report/grouptool/download.php');
+// require_once($CFG->dirroot . '/mod/grouptool/locallib.php');
 
 
 /**
