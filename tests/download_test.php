@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/mod/grouptool/locallib.php');
  * @author Anne Kreppenhofer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_grouptool_download_testcase extends base {
+class report_grouptool_download_testcase extends \advanced_testcase {
 
     /**
      * Test that downloading a grouptool as excel works.
