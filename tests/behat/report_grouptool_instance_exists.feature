@@ -24,4 +24,4 @@ Feature: Course report grouptool is only available if at least one grouptool cou
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    Then I should see "Grouptool"
+    Then I should see "Grouptool report"

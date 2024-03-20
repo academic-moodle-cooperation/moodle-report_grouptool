@@ -78,4 +78,4 @@ $string['grouptool:view_groups'] = 'View active groups';
 $string['grouptool:view_description'] = 'View grouptools description';
 $string['grouptool:view_regs_course_view'] = 'View a userlist containing who\'s registered/queued in which active group using grouptool.';
 $string['grouptool:view_regs_group_view'] = 'View a grouped list containing who\'s registered/queued in which active group using grouptool.';
-
+$string['modulename'] = 'report_grouptool';

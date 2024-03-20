@@ -1479,6 +1479,12 @@ class report_grouptool {
         $workbook->send($filename);
         $workbook->close();
     }
+    /**
+     * Helper function used to print empty cells for hidden columns
+     */
+    private function print_empty_cell() {
+        echo html_writer::tag('td', '', ['class' => '']);
+    }
 
 
 
