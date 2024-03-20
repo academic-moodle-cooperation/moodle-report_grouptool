@@ -90,6 +90,4 @@ class report_grouptool_download_testcase extends \advanced_testcase {
             'This test has not been implemented yet.'
         );
     }
-
-
 }
