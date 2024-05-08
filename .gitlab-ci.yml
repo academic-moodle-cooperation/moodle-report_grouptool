@@ -19,6 +19,7 @@ variables:
   before_script:
     - cd ../..
     - moodle-db-isready
+    - moodle-plugin-ci add-plugin --clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${ADD_PLUGIN_GROUPTOOL}
     - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-host=$DB_HOST --db-port=$DB_PORT
     - eval $(failed setup-command)
   script:
@@ -31,14 +32,14 @@ variables:
     - moodle-plugin-ci grunt
     - moodle-plugin-ci phpdoc
     - moodle-plugin-ci phpunit
-    - moodle-plugin-ci behat --profile chrome || true
+    - moodle-plugin-ci behat --profile chrome
     - failed result
   after_script:
     - failed report
   parallel:
     matrix:
-      - MOODLE_BRANCH: [ "MOODLE_403_STABLE" ]
-        PHP_VERSION: [ "8.0", "8.1", "8.2"]
+      - MOODLE_BRANCH: [ "MOODLE_404_STABLE" ]
+        PHP_VERSION: ["8.1", "8.2","8.3"]
 
 test:postgres:
   <<: *job_configuration
