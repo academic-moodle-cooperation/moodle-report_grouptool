@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-4.2.0 (2023-10-13)
+4.4.0 (2024-07-17)
 ------------------
 
-* First release for Moodle 4.2
+* First release for Moodle 4.4
