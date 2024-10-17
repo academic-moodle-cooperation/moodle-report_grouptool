@@ -366,7 +366,7 @@ class report_grouptool {
         $orderby = $SESSION->report_grouptool->userlist->orderby;
         if ($tsort = optional_param('tsort', 0, PARAM_ALPHANUM)) {
             // SHOW RESET button
-            if($tsort != 'reset'){
+            if ($tsort != 'reset') {
                 $resetbutton = html_writer::link(new moodle_url($PAGE->url, ['tsort' => 'reset']), get_string('resettable'));
                 echo $OUTPUT->container($resetbutton, $classes = "resettable mdl-right");
             }
