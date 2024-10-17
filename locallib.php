@@ -367,8 +367,8 @@ class report_grouptool {
         if ($tsort = optional_param('tsort', 0, PARAM_ALPHANUM)) {
             // SHOW RESET button
             if($tsort != 'reset'){
-                $resetbutton = html_writer::link(new moodle_url($PAGE->url,['tsort' => 'reset']),get_string('resettable'));
-                echo $OUTPUT->container($resetbutton,$classes = "resettable mdl-right");
+                $resetbutton = html_writer::link(new moodle_url($PAGE->url, ['tsort' => 'reset']), get_string('resettable'));
+                echo $OUTPUT->container($resetbutton, $classes = "resettable mdl-right");
             }
             $olddir = 'DESC';
             if (key_exists($tsort, $orderby)) {
