@@ -375,7 +375,7 @@ class report_grouptool {
                 $olddir = $orderby[$tsort];
                 unset($orderby[$tsort]);
             }
-            if($tsort == 'reset'){
+            if ($tsort == 'reset'){
                 $tsort = 'lastname';
                 $olddir = 'DESC';
             }
