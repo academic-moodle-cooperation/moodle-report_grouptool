@@ -83,7 +83,7 @@ switch ($format) {
         $readableformat = 'unknown';
 }
 
-// require_capability('report/grouptool:view_regs_course_view', $context);
+// require_capability('report/grouptool:view_regs_course_view', $context);.
 // Trigger userlist event.
 $event = \report_grouptool\event\userlist_exported::create([
     'objectid' => $cm->instance,

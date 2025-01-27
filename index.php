@@ -48,7 +48,7 @@ report_helper::print_report_selector(get_string('pluginname', 'report_grouptool'
 if (!isset($SESSION->report_grouptool)) {
     $SESSION->report_grouptool = new stdClass();
 }
-// Icons for collapse feature
+// Icons for collapse feature.
 $iconcollapsed = html_writer::tag('span',
     '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>',
     ['class' => "collapsed-icon icon-no-margin  mr-1", 'title' => "Expand"]);
@@ -56,9 +56,9 @@ $iconexpanded = html_writer::tag('span',
     '<i class="icon fa fa-chevron-down fa-fw" aria-hidden="true"></i>',
     ['class' => "expanded-icon icon-no-margin  mr-1", 'title' => "Collapse"]);
 foreach ($grouptools as $grouptool) {
-    // Creating a new report grouptool instance on the basis of a grouptool
+    // Creating a new report grouptool instance on the basis of a grouptool.
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
-    // Collapsible feature
+    // Collapsible feature.
     $collapsible = html_writer::tag('a', $iconcollapsed.$iconexpanded,
             ['id' => 'collapse',
                 'data-toggle' => "collapse",
@@ -74,7 +74,7 @@ foreach ($grouptools as $grouptool) {
             'class' => 'text-truncate',
             ]);
 
-    // Heading with collapse feature
+    // Heading with collapse feature.
     echo $OUTPUT->heading(html_writer::div($collapsible, 'd-flex'));
     echo $OUTPUT->box_start($classes = "collapse show", $id = "collapse".$grouptool->coursemodule);
     $report->view_userlist();

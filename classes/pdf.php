@@ -22,6 +22,7 @@
  * @copyright 2023 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace report_grouptool;
 
 use context_course;
@@ -29,7 +30,7 @@ use context_course;
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../lib/pdflib.php');
-require_once($CFG->dirroot.'/report/grouptool/locallib.php');
+require_once($CFG->dirroot . '/report/grouptool/locallib.php');
 
 
 /**
@@ -44,10 +45,10 @@ class pdf extends \pdf {
     /** int NORMLINEHEIGHT = 12 */
     const NORMLINEHEIGHT = 12;
 
-    /** @var string[] $header1 defines what's in the upper row of page-header **/
+    /** @var string[] $header1 defines what's in the upper row of page-header * */
     protected $header1 = null;
 
-    /** @var string[] $header2 defines what's in the lower row of page-header **/
+    /** @var string[] $header2 defines what's in the lower row of page-header * */
     protected $header2 = null;
 
     /**
@@ -77,7 +78,7 @@ class pdf extends \pdf {
     /** @var int|null used to calculate heights of text-blocks */
     protected $bigheight = null;
 
-    /** @var array Holds all instance specific useridentityfields*/
+    /** @var array Holds all instance specific useridentityfields */
     protected $useridentityfields = null;
 
     /**
@@ -99,7 +100,7 @@ class pdf extends \pdf {
      * @throws \coding_exception
      */
     public function __construct($type, $coursename, $grouptoolname, $timeavailable, $timedue,
-                                $viewname, $orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
+                                $viewname, $orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8') {
         global $SITE, $USER;
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
@@ -120,7 +121,7 @@ class pdf extends \pdf {
         $this->setPageOrientation($orientation);
 
         // Set document information!
-        $this->SetCreator(format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID)]).' | '.
+        $this->SetCreator(format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID)]) . ' | ' .
             get_string('pluginname', 'report_grouptool'));
         $this->SetAuthor(fullname($USER));
 
@@ -129,7 +130,7 @@ class pdf extends \pdf {
         $this->setPrintFooter(true);
 
         $textsize = optional_param('textsize', 1, PARAM_INT);
-        switch ($textsize){
+        switch ($textsize) {
             case "0":
                 $this->SetFontSize(8);
                 break;
@@ -142,17 +143,13 @@ class pdf extends \pdf {
         }
 
         // Set default monospaced font!
-        $this->SetDefaultMonospacedFont(/*PDF_FONT_MONOSPACED*/'freeserif');
+        $this->SetDefaultMonospacedFont(/*PDF_FONT_MONOSPACED*/ 'freeserif');
 
         // Set auto page breaks!
-        $this->SetAutoPageBreak(true, /*PDF_MARGIN_BOTTOM*/10);
+        $this->SetAutoPageBreak(true, /*PDF_MARGIN_BOTTOM*/ 10);
 
         // Set image scale factor
-        $this->setImageScale(/*PDF_IMAGE_SCALE_RATIO*/1);
-
-        /*
-         * ---------------------------------------------------------
-         */
+        $this->setImageScale(/*PDF_IMAGE_SCALE_RATIO*/ 1);
 
         // Set font!
         $this->SetFont('freeserif', '');
@@ -181,19 +178,19 @@ class pdf extends \pdf {
      * @param string $viewname the checkmark-modulename to view
      * @throws \coding_exception
      */
-    public function set_overview_header_data($coursename='coursename', $grouptoolname='grouptoolname', $timeavailable=0, $timedue=0,
-                                             $viewname='viewname') {
+    public function set_overview_header_data($coursename = 'coursename', $grouptoolname = 'grouptoolname', $timeavailable = 0, $timedue = 0,
+                                             $viewname = 'viewname') {
         $this->header1 = [];
-        $this->header1[0] = get_string('course').":";
+        $this->header1[0] = get_string('course') . ":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
+        $this->header1[2] = get_string('availabledate', 'report_grouptool') . ":";
         $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
         $this->header1[4] = get_string('groupoverview', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool') . ":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
+        $this->header2[2] = get_string('duedate', 'report_grouptool') . ":";
         $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
@@ -209,18 +206,18 @@ class pdf extends \pdf {
      * @throws \coding_exception
      */
     public function set_userlist_header_data($coursename, $grouptoolname, $timeavailable, $timedue,
-                                             $viewname ) {
+                                             $viewname) {
         $this->header1 = [];
-        $this->header1[0] = get_string('course').":";
+        $this->header1[0] = get_string('course') . ":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
+        $this->header1[2] = get_string('availabledate', 'report_grouptool') . ":";
         $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
         $this->header1[4] = get_string('userlist', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool') . ":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
+        $this->header2[2] = get_string('duedate', 'report_grouptool') . ":";
         $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
@@ -238,16 +235,16 @@ class pdf extends \pdf {
     public function set_header_data($coursename, $grouptoolname, $timeavailable, $timedue,
                                     $viewname) {
         $this->header1 = [];
-        $this->header1[0] = get_string('course').":";
+        $this->header1[0] = get_string('course') . ":";
         $this->header1[1] = $coursename;
-        $this->header1[2] = get_string('availabledate', 'report_grouptool').":";
+        $this->header1[2] = get_string('availabledate', 'report_grouptool') . ":";
         $this->header1[3] = empty($timeavailable) ? get_string('availabledateno', 'report_grouptool') : userdate($timeavailable);
         $this->header1[4] = get_string('overview', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool') . ":";
         $this->header2[1] = $grouptoolname;
-        $this->header2[2] = get_string('duedate', 'report_grouptool').":";
+        $this->header2[2] = get_string('duedate', 'report_grouptool') . ":";
         $this->header1[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
         $this->header2[4] = $viewname;
     }
@@ -339,7 +336,7 @@ class pdf extends \pdf {
         $this->SetY(-15);
 
         // Page number.
-        $this->Cell(0, 10, $this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 10, $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
 
     /**
@@ -352,7 +349,7 @@ class pdf extends \pdf {
      * @param \stdClass[] $moodlemembers the users registered in moodle-group
      * @throws \coding_exception
      */
-    public function add_grp_overview($groupname, $groupinfo, $registration=[], $queue=[], $moodlemembers = []) {
+    public function add_grp_overview($groupname, $groupinfo, $registration = [], $queue = [], $moodlemembers = []) {
         $fill = 0;
 
         // Calculate height.
@@ -390,7 +387,7 @@ class pdf extends \pdf {
         } else if (count($moodlemembers) == 0) {
             $this->SetFont('', 'I');
             $this->MultiCell(0, $normalheight,
-                "--".get_string('no_registrations', 'report_grouptool')."--", 0, 'C', false,
+                "--" . get_string('no_registrations', 'report_grouptool') . "--", 0, 'C', false,
                 1, null, null, true, 1, true, false, $normalheight, 'M', true);
             $this->SetFont('', '');
         }
@@ -419,7 +416,7 @@ class pdf extends \pdf {
             }
         } else {
             $this->SetFont('', 'I');
-            $this->MultiCell(0, $normalheight, "--".get_string('nobody_queued', 'report_grouptool')."--",
+            $this->MultiCell(0, $normalheight, "--" . get_string('nobody_queued', 'report_grouptool') . "--",
                 0, 'C', false, 1, null, null, true, 1, true, false, $normalheight,
                 'M', true);
             $this->SetFont('', '');
@@ -475,11 +472,13 @@ class pdf extends \pdf {
                 $ln = 1;
             }
             if ($key == 'email') {
-                $this->MultiCell($identitycolumnwidth * 2 * $writewidth, $normalheight, get_string('email'), $border, 'C', true,
-                    $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
+                $this->MultiCell($identitycolumnwidth * 2 * $writewidth, $normalheight,
+                    get_string('email'), $border, 'C', true, $ln, null,
+                    null, true, 1, true, false, $normalheight, 'M', true);
             } else {
-                $this->MultiCell($identitycolumnwidth * $writewidth, $normalheight, \core_user\fields::get_display_name($key), $border, 'C',
-                    true, $ln, null, null, true, 1, true, false, $normalheight, 'M', true);
+                $this->MultiCell($identitycolumnwidth * $writewidth, $normalheight,
+                    \core_user\fields::get_display_name($key), $border, 'C', true, $ln, null,
+                    null, true, 1, true, false, $normalheight, 'M', true);
             }
         }
 
@@ -572,7 +571,7 @@ class pdf extends \pdf {
      * @return int height of written row
      * @throws \coding_exception
      */
-    public function add_userdata($row, $header=false, $getheightonly=false) {
+    public function add_userdata($row, $header = false, $getheightonly = false) {
         global $SESSION;
 
         $margins = $this->getMargins();
@@ -650,7 +649,7 @@ class pdf extends \pdf {
             if ($key == 'email') {
                 $curwidth = $widths['email'];
             }
-            if (property_exists((object) $row, strtolower($key))) {
+            if (property_exists((object)$row, strtolower($key))) {
                 $key = strtolower($key);
             }
             if (!in_array($key, $collapsed)) {
@@ -697,7 +696,7 @@ class pdf extends \pdf {
             if (!empty($row['queues']) && is_array($row['queues'])) {
                 $queuesstrings = [];
                 foreach ($row['queues'] as $queue) {
-                    $queuesstrings[] = $queue['name'].' (#'.$queue['rank'].')';
+                    $queuesstrings[] = $queue['name'] . ' (#' . $queue['rank'] . ')';
                 }
                 if ($getheightonly) {
                     $this->MultiCell(0, $height, implode("\n", $queuesstrings), $borderl,
