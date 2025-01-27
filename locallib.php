@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/report/grouptool/lib.php');
 require_once($CFG->dirroot.'/mod/grouptool/definitions.php');
 require_once($CFG->libdir.'/formslib.php');
@@ -106,21 +106,21 @@ class report_grouptool {
         if (!empty($cm)) {
             $this->cm = $cm;
         } else if (!$this->cm = get_coursemodule_from_id('grouptool', $cmid)) {
-            print_error('invalidcoursemodule');
+            throw new \core\exception\moodle_exception('invalidcoursemodule');
         }
         $this->context = context_module::instance($this->cm->id);
 
         if ($course) {
             $this->course = $course;
         } else if (!$this->course = $DB->get_record('course', ['id' => $this->cm->course])) {
-            print_error('invalidid', 'grouptool');
+            throw new \core\exception\moodle_exception('invalidid', 'grouptool');
         }
 
         if ($grouptool) {
             $this->grouptool = $grouptool;
         } else if (! $this->grouptool = $DB->get_record('grouptool',
             ['id' => $this->cm->instance])) {
-            print_error('invalidid', 'grouptool');
+            throw new \core\exception\moodle_exception('invalidid', 'grouptool');
         }
 
         $this->grouptool->cmidnumber = $this->cm->idnumber;
