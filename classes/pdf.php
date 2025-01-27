@@ -191,7 +191,7 @@ class pdf extends \pdf {
         $this->header1[4] = get_string('groupoverview', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool').":";
         $this->header2[1] = $grouptoolname;
         $this->header2[2] = get_string('duedate', 'report_grouptool').":";
         $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
@@ -218,7 +218,7 @@ class pdf extends \pdf {
         $this->header1[4] = get_string('userlist', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool').":";
         $this->header2[1] = $grouptoolname;
         $this->header2[2] = get_string('duedate', 'report_grouptool').":";
         $this->header2[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
@@ -245,7 +245,7 @@ class pdf extends \pdf {
         $this->header1[4] = get_string('overview', 'report_grouptool');
 
         $this->header2 = [];
-        $this->header2[0] = get_string('modulename', 'report_grouptool').":";
+        $this->header2[0] = get_string('modulename', 'mod_grouptool').":";
         $this->header2[1] = $grouptoolname;
         $this->header2[2] = get_string('duedate', 'report_grouptool').":";
         $this->header1[3] = empty($timedue) ? get_string('duedateno', 'report_grouptool') : userdate($timedue);
