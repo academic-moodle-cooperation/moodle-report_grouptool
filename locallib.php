@@ -643,7 +643,7 @@ class report_grouptool {
                                     'tab'     => 'overview',
                                     'groupid' => $groupinfo[$reg]->id,
                                 ]);
-                                $registrations[] = html_writer::link($grouplink, $groupinfo[$reg]->name);
+                                $registrations[] = $groupinfo[$reg]->name;
                             }
                         } else {
                             $registrations = ['-'];
