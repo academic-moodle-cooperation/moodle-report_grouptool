@@ -29,4 +29,4 @@ $plugin->release = "v4.5.0";       // User-friendly version number.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2024100700;      // Requires this Moodle version!
 $plugin->component = 'report_grouptool';    // To check on upgrade, that module sits in correct place.
-$plugin->dependencies = ['mod_grouptool' => 2024073000]; // requires this moodle version
+$plugin->dependencies = ['mod_grouptool' => 2024073000]; // Requires this moodle version!

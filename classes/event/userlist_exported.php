@@ -24,7 +24,6 @@
  */
 
 namespace report_grouptool\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The \report_grouptool\userlist_exported class holds the logic for the event

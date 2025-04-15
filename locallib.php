@@ -155,7 +155,6 @@ class report_grouptool {
                 $options[$grouping->id] = $grouping->name;
             }
         }
-        // $this->get_paramter_dropdowns($url,$groupingid,$groupid,$orientation);
         flush();
 
         $this->userlist_table($groupingid, $groupid);
@@ -170,7 +169,6 @@ class report_grouptool {
      */
     protected function get_download_dropdown($url, $downloadurl) {
         global $OUTPUT;
-        // <button type="button" class="btn btn-primary">Primary</button>
         $downloadselect = $this->get_download_select($url);
         echo html_writer::tag('div', get_string('download_options', 'report_grouptool').'&nbsp;'.
             $OUTPUT->render($downloadselect).'&nbsp;'.
@@ -272,7 +270,8 @@ class report_grouptool {
         $groupdata = null;
         if ($ignoregtinstance) {
             $groupdata = $DB->get_records_sql("
-                   SELECT ".$idstring.", MAX(grp.name) AS name, MAX(grp.description) AS description,".$sizesql." MAX(agrp.sort_order) AS sort_order,
+                   SELECT ".$idstring.", MAX(grp.name) AS name, MAX(grp.description) 
+                   AS description,".$sizesql." MAX(agrp.sort_order) AS sort_order,
                           agrp.active AS active
                      FROM {groups} grp
                 LEFT JOIN {grouptool_agrps} agrp ON agrp.groupid = grp.id
@@ -340,6 +339,7 @@ class report_grouptool {
 
         return $groupdata;
     }
+
     /**
      * get all data necessary for displaying/exporting userlist table
      *
