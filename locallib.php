@@ -269,8 +269,7 @@ class report_grouptool {
 
         $groupdata = null;
         if ($ignoregtinstance) {
-            $groupdata = $DB->get_records_sql("
-                   SELECT ".$idstring.", MAX(grp.name) AS name, MAX(grp.description) 
+            $groupdata = $DB->get_records_sql("SELECT ".$idstring.", MAX(grp.name) AS name, MAX(grp.description)
                    AS description,".$sizesql." MAX(agrp.sort_order) AS sort_order,
                           agrp.active AS active
                      FROM {groups} grp
