@@ -49,8 +49,8 @@ $modinfo = get_fast_modinfo($cm->course);
 $cm = $modinfo->get_cm($cm->id);
 if (empty($cm->uservisible)) {
     if ($cm->availableinfo) {
-        // User cannot access the activity, but on the course page they will
-        // see a link to it, greyed-out, with information (HTML format) from
+        // User cannot access the activity, but on the course page they will!
+        // see a link to it, greyed-out, with information (HTML format) from!
         // $cm->availableinfo about why they can't access it.
         $text = html_writer::empty_tag('br').$cm->availableinfo;
     } else {
@@ -83,8 +83,7 @@ switch ($format) {
         $readableformat = 'unknown';
 }
 
-// require_capability('report/grouptool:view_regs_course_view', $context);.
-// Trigger userlist event.
+// Trigger userlist event!
 $event = \report_grouptool\event\userlist_exported::create([
     'objectid' => $cm->instance,
     'context'  => context_module::instance($cm->id),

@@ -148,7 +148,7 @@ class pdf extends \pdf {
         // Set auto page breaks!
         $this->SetAutoPageBreak(true, /*PDF_MARGIN_BOTTOM*/ 10);
 
-        // Set image scale factor
+        // Set image scale factor!
         $this->setImageScale(/*PDF_IMAGE_SCALE_RATIO*/ 1);
 
         // Set font!
@@ -178,7 +178,8 @@ class pdf extends \pdf {
      * @param string $viewname the checkmark-modulename to view
      * @throws \coding_exception
      */
-    public function set_overview_header_data($coursename = 'coursename', $grouptoolname = 'grouptoolname', $timeavailable = 0, $timedue = 0,
+    public function set_overview_header_data($coursename = 'coursename',
+                                             $grouptoolname = 'grouptoolname', $timeavailable = 0, $timedue = 0,
                                              $viewname = 'viewname') {
         $this->header1 = [];
         $this->header1[0] = get_string('course') . ":";

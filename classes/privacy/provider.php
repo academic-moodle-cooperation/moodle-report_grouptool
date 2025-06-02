@@ -25,8 +25,6 @@
 
 namespace report_grouptool\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for report_grouptool implementing null_provider.
  *
