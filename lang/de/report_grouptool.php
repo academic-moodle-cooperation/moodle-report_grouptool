@@ -70,12 +70,7 @@ $string['rank'] = 'Rang';
 $string['registered'] = 'Angemeldet';
 $string['registrations'] = 'Anmeldungen';
 $string['status'] = 'Status';
-$string['status_help'] = '<ul>
-<li><strong>✔</strong> angemeldet in Moodle-Gruppe und Gruppenverwaltung</li>
-<li><strong>?</strong> angemeldet in Moodle-Gruppe, nicht aber in der Gruppenverwaltung</li>
-<li><strong>+</strong> angemeldet in der Gruppenverwaltung, nicht aber in Moodle-Gruppe</li>
-<li><strong>1, 2, 3...</strong> auf Warteliste in der Gruppenverwaltung</li>
-</ul>';
+$string['status_help'] = '<ul><li><strong>✔</strong> angemeldet in Moodle-Gruppe und Gruppenverwaltung</li><li><strong>?</strong> angemeldet in Moodle-Gruppe, nicht aber in der Gruppenverwaltung</li><li><strong>+</strong> angemeldet in der Gruppenverwaltung, nicht aber in Moodle-Gruppe</li><li><strong>1, 2, 3...</strong> auf Warteliste in der Gruppenverwaltung</li></ul>';
 $string['switched_to_all_groups'] = 'Ändere Gruppenfilter zu "Alle"!';
 $string['total'] = 'Gesamt';
 $string['userlist'] = 'Teilnehmer/innenliste';
