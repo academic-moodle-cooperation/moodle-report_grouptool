@@ -24,8 +24,6 @@
  */
 
 namespace report_grouptool\event;
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The \report_grouptool\export base class holds the common logic for the export events
  *
