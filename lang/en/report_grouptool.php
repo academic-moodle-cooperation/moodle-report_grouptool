@@ -70,13 +70,7 @@ $string['rank'] = 'Rank';
 $string['registered'] = 'Registered';
 $string['registrations'] = 'Group-registrations';
 $string['status'] = 'Status';
-$string['status_help'] = '<ul>
-<li><strong>✔</strong> registered in Moodle-group and grouptool</li>
-<li><strong>?</strong> registered in Moodle-group but not in grouptool</li>
-<li><strong>+</strong> registered in grouptool but not in Moodle-group</li>
-<li><strong>1, 2, 3...</strong> queued in grouptool</li>
-</ul>';
+$string['status_help'] = '<ul><li><strong>✔</strong> registered in Moodle-group and grouptool</li><li><strong>?</strong> registered in Moodle-group but not in grouptool</li><li><strong>+</strong> registered in grouptool but not in Moodle-group</li><li><strong>1, 2, 3...</strong> queued in grouptool</li></ul>';
 $string['switched_to_all_groups'] = 'Changed group filter to all groups!';
 $string['total'] = 'Total';
 $string['userlist'] = 'User list';
-

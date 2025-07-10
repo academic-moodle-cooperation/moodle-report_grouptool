@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.0.0 (2025-06-30)
+------------------
+* Release for Moodle 5.0
+* [LANGSTRING] #8280 Update Langstring formats for AMOS
 
 4.5.0 (2025-02-05)
 ------------------
