@@ -61,7 +61,7 @@ foreach ($grouptools as $grouptool) {
     // Collapsible feature.
     $collapsible = html_writer::tag('a', $iconcollapsed.$iconexpanded,
             ['id' => 'collapse',
-                'data-toggle' => "collapse",
+                'data-bs-toggle' => "collapse",
                 'href' => "#collapse".$grouptool->coursemodule,
                 'role' => "button",
                 'aria-expanded' => "false",
