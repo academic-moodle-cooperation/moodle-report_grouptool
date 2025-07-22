@@ -97,7 +97,7 @@ class report_grouptool {
      * @throws \moodle_exception
      */
     public function __construct($cmid, $grouptool=null, $cm=null, $course=null) {
-        global $DB;
+        global $DB,$SESSION;
 
         if ($cmid == 'staticonly') {
             // Use static functions only!
@@ -125,6 +125,14 @@ class report_grouptool {
 
         $this->grouptool->cmidnumber = $this->cm->idnumber;
         $this->grouptool->course   = $this->course->id;
+
+        $id = $this->grouptool->id;
+        if (!isset($SESSION->report_grouptool)) {
+            $SESSION->report_grouptool = new stdClass();
+        }
+        if (!isset($SESSION->report_grouptool->$id)) {
+            $SESSION->report_grouptool->$id = new stdClass();
+        }
     }
     /**
      * view userlist tab
@@ -186,7 +194,8 @@ class report_grouptool {
      * @throws coding_exception
      */
     protected function get_download_select($url) {
-        static $options = null;
+        global $SESSION;
+        $options = null;
         if (!$options) {
             $options = [
                 GROUPTOOL_TXT => get_string('download_txt', 'report_grouptool'),
@@ -195,8 +204,19 @@ class report_grouptool {
                 GROUPTOOL_ODS => get_string('download_ods', 'report_grouptool'),
             ];
         }
-        $param = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
-        return new single_select($url, 'format', $options, $param, false);
+        $param = optional_param('format'.$this->grouptool->id, null, PARAM_INT);
+        $id = $this->grouptool->id;
+        if($param === null) {
+            if(!isset($SESSION->report_grouptool->$id->format)) {
+                $SESSION->report_grouptool->$id->format = GROUPTOOL_TXT;
+                $param = GROUPTOOL_TXT;
+            }else{
+                $param = $SESSION->report_grouptool->$id->format;
+            }
+        }else{
+            $SESSION->report_grouptool->$id->format = $param;
+        }
+        return new single_select($url, 'format'.$this->grouptool->id, $options, $param, false);
     }
     /**
      * gets data about active groups for this instance or all instances if ignoregtinstance is set
@@ -354,19 +374,19 @@ class report_grouptool {
     public function userlist_table($groupingid = 0, $groupid = 0, $onlydata = false) {
         global $OUTPUT, $CFG, $DB, $PAGE, $SESSION;
         $useridentityfields = self::get_useridentity_fields();
-
-        if (!isset($SESSION->report_grouptool->userlist)) {
-            $SESSION->report_grouptool->userlist = new stdClass();
+        $id = $this->grouptool->id;
+        if (!isset($SESSION->report_grouptool->$id->userlist)) {
+            $SESSION->report_grouptool->$id->userlist = new stdClass();
         }
         // Handles order direction!
         if (!isset($SESSION->report_grouptool->userlist->orderby)) {
-            $SESSION->report_grouptool->userlist->orderby = [];
+            $SESSION->report_grouptool->$id->userlist->orderby = [];
         }
-        $orderby = $SESSION->report_grouptool->userlist->orderby;
-        if ($tsort = optional_param('tsort', 0, PARAM_ALPHANUM)) {
+        $orderby = $SESSION->report_grouptool->$id->userlist->orderby;
+        if ($tsort = optional_param('tsort'.$this->grouptool->id, 0, PARAM_ALPHANUM)) {
             // SHOW RESET button
             if ($tsort != 'reset') {
-                $resetbutton = html_writer::link(new moodle_url($PAGE->url, ['tsort' => 'reset']), get_string('resettable'));
+                $resetbutton = html_writer::link(new moodle_url($PAGE->url, ['tsort'.$this->grouptool->id => 'reset']), get_string('resettable'));
                 echo $OUTPUT->container($resetbutton, $classes = "resettable mdl-right");
             }
             $olddir = 'DESC';
@@ -384,27 +404,27 @@ class report_grouptool {
             array_unshift($oldorderby, $tsort);
             array_unshift($oldorderdir, (($olddir == 'DESC') ? 'ASC' : 'DESC'));
             $orderby = array_combine($oldorderby, $oldorderdir);
-            $SESSION->report_grouptool->userlist->orderby = $orderby;
+            $SESSION->report_grouptool->$id->userlist->orderby = $orderby;
         }
 
         // Handles collapsed columns!
-        if (!isset($SESSION->report_grouptool->userlist->collapsed)) {
-            $SESSION->report_grouptool->userlist->collapsed = [];
+        if (!isset($SESSION->report_grouptool->$id->userlist->collapsed)) {
+            $SESSION->report_grouptool->$id->userlist->collapsed = [];
         }
-        $collapsed = $SESSION->report_grouptool->userlist->collapsed;
-        if ($thide = optional_param('thide', 0, PARAM_ALPHANUM)) {
+        $collapsed = $SESSION->report_grouptool->$id->userlist->collapsed;
+        if ($thide = optional_param('thide'.$this->grouptool->id, 0, PARAM_ALPHANUM)) {
             if (!in_array($thide, $collapsed)) {
                 array_push($collapsed, $thide);
             }
-            $SESSION->report_grouptool->userlist->collapsed = $collapsed;
+            $SESSION->report_grouptool->$id->userlist->collapsed = $collapsed;
         }
-        if ($tshow = optional_param('tshow', 0, PARAM_ALPHANUM)) {
+        if ($tshow = optional_param('tshow'.$this->grouptool->id, 0, PARAM_ALPHANUM)) {
             foreach ($collapsed as $key => $value) {
                 if ($value == $tshow) {
                     unset($collapsed[$key]);
                 }
             }
-            $SESSION->report_grouptool->userlist->collapsed = $collapsed;
+            $SESSION->report_grouptool->$id->userlist->collapsed = $collapsed;
         }
 
         $downloadurl = '';
@@ -422,7 +442,7 @@ class report_grouptool {
         }
 
         // Get all ppl that are allowed to register!
-        list($esql, $params) = get_enrolled_sql($this->context, 'report/grouptool:register');
+        [$esql, $params] = get_enrolled_sql($this->context, 'report/grouptool:register');
         $sql = "SELECT u.id
                   FROM {user} u
              LEFT JOIN ($esql) eu ON eu.id=u.id
@@ -438,7 +458,7 @@ class report_grouptool {
             } else {
                 $groupingusers = array_keys($groupingusers);
             }
-            list($groupssql, $groupsparams) = $DB->get_in_or_equal(array_keys($groups));
+            [$groupssql, $groupsparams] = $DB->get_in_or_equal(array_keys($groups));
             $groupingusers2 = $DB->get_fieldset_sql("
             SELECT DISTINCT u.id
               FROM {user} u
@@ -451,7 +471,7 @@ class report_grouptool {
                 $userssql = " = :groupingparam";
                 $groupingparams = ['groupingparam' => -1];
             } else {
-                list($userssql, $groupingparams) = $DB->get_in_or_equal($groupingusers, SQL_PARAMS_NAMED);
+                [$userssql, $groupingparams] = $DB->get_in_or_equal($groupingusers, SQL_PARAMS_NAMED);
             }
             // Extend sql to only include people registered in moodle-group/grouptool-group or queued in grouptool group!
             $sql .= " AND u.id ".$userssql;
@@ -480,7 +500,7 @@ class report_grouptool {
                 $userssql = " = :groupparam";
                 $groupparams = ['groupparam' => -1];
             } else {
-                list($userssql, $groupparams) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
+                [$userssql, $groupparams] = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
             }
             // Extend sql to only include people registered in moodle-group/grouptool-group or queued in grouptool group!
             $sql .= " AND u.id ".$userssql;
@@ -489,7 +509,17 @@ class report_grouptool {
         $users = $DB->get_records_sql($sql, $params);
 
         if (!$onlydata) {
-            $format = optional_param('format', GROUPTOOL_TXT, PARAM_INT);
+            $format = optional_param('format'.$this->grouptool->id, null, PARAM_INT);
+            if( $format === null) {
+                if (!isset($SESSION->report_grouptool->$id->format)) {
+                    $SESSION->report_grouptool->$id->format = GROUPTOOL_TXT;
+                    $format = GROUPTOOL_TXT;
+                } else {
+                    $format = $SESSION->report_grouptool->$id->format;
+                }
+            } else {
+                $SESSION->report_grouptool->$id->format = $format;
+            }
             $url = new moodle_url($PAGE->url, [
                 'sesskey'     => sesskey(),
             ]);
@@ -534,11 +564,11 @@ class report_grouptool {
             flush();
             if (!in_array('fullname', $collapsed)) {
                 $firstnamelink = html_writer::link(new moodle_url($PAGE->url,
-                    ['tsort' => 'firstname']),
+                    ['tsort'.$this->grouptool->id => 'firstname']),
                     get_string('firstname').
                     $this->pic_if_sorted($orderby, 'firstname'));
                 $surnamelink = html_writer::link(new moodle_url($PAGE->url,
-                    ['tsort' => 'lastname']),
+                    ['tsort'.$this->grouptool->id => 'lastname']),
                     get_string('lastname').
                     $this->pic_if_sorted($orderby, 'lastname'));
                 $fullname = html_writer::tag('div', get_string('fullname').
@@ -553,7 +583,7 @@ class report_grouptool {
             foreach ($useridentityfields as $identifier => $text) {
                 if (!in_array($identifier, $collapsed)) {
                     $idnumberlink = html_writer::link(new moodle_url($PAGE->url,
-                        ['tsort' => $identifier]),
+                        ['tsort'.$this->grouptool->id => $identifier]),
                         $text.
                         $this->pic_if_sorted($orderby, $identifier));
                     echo html_writer::tag('th', $idnumberlink.$this->collapselink($identifier, $collapsed),
@@ -811,7 +841,7 @@ class report_grouptool {
         $agrps = $this->get_active_groups(false, false, 0, $groupid, $groupingid, false);
         $agrpids = array_keys($agrps);
         if (!empty($agrpids)) {
-            list($agrpsql, $agrpparams) = $DB->get_in_or_equal($agrpids);
+            [$agrpsql, $agrpparams] = $DB->get_in_or_equal($agrpids);
         } else {
             $agrpsql = '';
             $agrpparams = [];
@@ -825,7 +855,7 @@ class report_grouptool {
             if (!is_array($userids)) {
                 $userids = [$userids];
             }
-            list($usersql, $userparams) = $DB->get_in_or_equal($userids);
+            [$usersql, $userparams] = $DB->get_in_or_equal($userids);
         } else {
             $usersql = ' LIKE *';
             $userparams = [];
@@ -898,10 +928,10 @@ class report_grouptool {
     private function collapselink($search, $collapsed = []) {
         global $PAGE, $OUTPUT;
         if (in_array($search, $collapsed)) {
-            $url = new moodle_url($PAGE->url, ['tshow' => $search]);
+            $url = new moodle_url($PAGE->url, ['tshow'.$this->grouptool->id => $search]);
             $pic = $OUTPUT->pix_icon('t/switch_plus', 'show');
         } else {
-            $url = new moodle_url($PAGE->url, ['thide' => $search]);
+            $url = new moodle_url($PAGE->url, ['thide'.$this->grouptool->id => $search]);
             $pic = $OUTPUT->pix_icon('t/switch_minus', 'hide');
         }
         return html_writer::tag('div', html_writer::link($url, $pic),
