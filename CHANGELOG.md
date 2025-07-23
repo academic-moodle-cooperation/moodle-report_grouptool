@@ -6,7 +6,6 @@ CHANGELOG
 * [BUG] #8419 Fix german langstring contains english text
 * [BUG] #8409 Fix Collapsible does not work in the group tool report
 * [BUG] #8221 Fix Changing the export format of one group changes export format of all groups
-* [BUG] #8419 Update german Langstring
 * [LANGSTRING] #8280 Update Langstring formats for AMOS
 
 4.5.0 (2025-02-05)
