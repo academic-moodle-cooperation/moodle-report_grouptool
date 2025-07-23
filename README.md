@@ -17,6 +17,10 @@ The Grouptool Report is an extension to the [Grouptool
 module](https://academic-moodle-cooperation.org/module/grouptool/). It gives the teacher an overview over all 
 participants in each grouptool and the option to export them as lists.
 
+Usage
+-------
+The plug-in supports group management by displaying registered students in a table. The application scenario is simple: registrations can be viewed and waiting lists tracked in a clear format.
+
 Requirements
 ------------
 To use this extension the module grouptool is necessary
@@ -31,11 +35,15 @@ Installation
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
 
+Privacy API
+--------------
+
+The plugin fully implements the Moodle Privacy API.
 
 Documentation
 -------------
 
-No documentation
+You can find a documentation for the plugin on the [AMC website](https://academic-moodle-cooperation.org/gruppenverwaltung-bericht/).
 
 Bug Reports / Support
 ---------------------
