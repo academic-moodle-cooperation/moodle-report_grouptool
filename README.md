@@ -13,13 +13,19 @@ This file is part of the report_grouptool plugin for Moodle - <http://moodle.org
 Description
 -----------
 
-The Grouptool Report is an extension to the [Grouptool
-module](https://academic-moodle-cooperation.org/module/grouptool/). It gives the teacher an overview over all 
-participants in each grouptool and the option to export them as lists.
+The Grouptool Report plug-in is an extension of the Grouptool plug-in. 
+It provides educators with an overview of which course participants are registered in the respective groups in the Grouptool plug-in. 
+The lists of groups can be conveniently downloaded in standardized formats.
+
+
+Usage
+-------
+The plug-in supports group management by displaying registered students in a table. 
+The application scenario is simple: registrations can be viewed and waiting lists tracked in a clear format.
 
 Requirements
 ------------
-To use this extension the module grouptool is necessary
+The module [mod_grouptool](https://moodle.org/plugins/mod_grouptool) must be installed to run this plugin.
 
 Installation
 ------------
@@ -31,18 +37,22 @@ Installation
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
 
+Privacy API
+--------------
+
+The plugin fully implements the Moodle Privacy API.
 
 Documentation
 -------------
 
-No documentation
+You can find a documentation for the plugin on the [AMC website](https://academic-moodle-cooperation.org/gruppenverwaltung-bericht/).
 
 Bug Reports / Support
 ---------------------
 
 We try our best to deliver bug-free plugins, but we can not test the plugin for every platform,
 database, PHP and Moodle version. If you find any bug please report it on
-[GitHub](https://github.com/academic-moodle-cooperation/moodle-local_Grouptoolreport/issues).
+[GitHub](https://github.com/academic-moodle-cooperation/moodle-report_grouptool/issues).
 Please provide a detailed bug description, including the plugin and Moodle version and, if
 applicable, a screenshot.
 
