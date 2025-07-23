@@ -1,6 +1,6 @@
 CHANGELOG
 =========
-5.0.0 (2025-06-30)
+5.0.0 (2025-07-23)
 ------------------
 * Release for Moodle 5.0
 * [BUG] #8419 Fix german langstring contains english text
