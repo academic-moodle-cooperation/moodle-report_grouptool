@@ -99,8 +99,18 @@ class pdf extends \pdf {
      * @param string $encoding Charset encoding (used only when converting back html entities); default is UTF-8.
      * @throws \coding_exception
      */
-    public function __construct($type, $coursename, $grouptoolname, $timeavailable, $timedue,
-                                $viewname, $orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8') {
+    public function __construct(
+        $type,
+        $coursename,
+        $grouptoolname,
+        $timeavailable,
+        $timedue,
+        $viewname,
+        $orientation = 'P',
+        $unit = 'mm',
+        $format = 'A4',
+        $unicode = true,
+        $encoding = 'UTF-8') {
         global $SITE, $USER;
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
