@@ -57,7 +57,7 @@ if (empty($cm->uservisible)) {
         // User cannot access the activity and they will not see it at all.
         $text = '';
     }
-    $notification = $OUTPUT->notification(get_string('conditions_prevent_access', 'report_grouptool').
+    $notification = $OUTPUT->notification(get_string('condition_prevent_access', 'report_grouptool').
                                           html_writer::empty_tag('br').$text, 'error');
     echo $OUTPUT->header();
     echo $OUTPUT->box($notification, 'generalbox centered');

@@ -113,14 +113,14 @@ class report_grouptool {
         if ($course) {
             $this->course = $course;
         } else if (!$this->course = $DB->get_record('course', ['id' => $this->cm->course])) {
-            throw new \core\exception\moodle_exception('invalidid', 'grouptool');
+            throw new \core\exception\moodle_exception('invalidid', 'report_grouptool');
         }
 
         if ($grouptool) {
             $this->grouptool = $grouptool;
         } else if (!$this->grouptool = $DB->get_record('grouptool',
             ['id' => $this->cm->instance])) {
-            throw new \core\exception\moodle_exception('invalidid', 'grouptool');
+            throw new \core\exception\moodle_exception('invalidid', 'report_grouptool');
         }
 
         $this->grouptool->cmidnumber = $this->cm->idnumber;

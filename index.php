@@ -51,10 +51,10 @@ if (!isset($SESSION->report_grouptool)) {
 // Icons for collapse feature.
 $iconcollapsed = html_writer::tag('span',
     '<i class="icon fa fa-chevron-right fa-fw" aria-hidden="true"></i>',
-    ['class' => "collapsed-icon icon-no-margin  mr-1", 'title' => "Expand"]);
+    ['class' => "collapsed-icon icon-no-margin  mr-1", 'title' => get_string('expand')]);
 $iconexpanded = html_writer::tag('span',
     '<i class="icon fa fa-chevron-down fa-fw" aria-hidden="true"></i>',
-    ['class' => "expanded-icon icon-no-margin  mr-1", 'title' => "Collapse"]);
+    ['class' => "expanded-icon icon-no-margin  mr-1", 'title' => get_string('collapse')]);
 foreach ($grouptools as $grouptool) {
     // Creating a new report grouptool instance on the basis of a grouptool.
     $report = new report_grouptool($grouptool->coursemodule, $grouptool, null, $course);
