@@ -382,7 +382,7 @@ class report_grouptool {
             $SESSION->report_grouptool->$id->userlist = new stdClass();
         }
         // Handles order direction!
-        if (!isset($SESSION->report_grouptool->userlist->orderby)) {
+        if (!isset($SESSION->report_grouptool->$id->userlist->orderby)) {
             $SESSION->report_grouptool->$id->userlist->orderby = [];
         }
         $orderby = $SESSION->report_grouptool->$id->userlist->orderby;
