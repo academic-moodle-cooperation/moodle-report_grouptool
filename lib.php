@@ -38,17 +38,22 @@ function report_grouptool_extend_navigation_course($navigation, $course, $contex
     $modinfo = get_fast_modinfo($course, -1);
     if (empty($modinfo->instances['grouptool'])) {
         $isthere = $navigation->get(get_string('grouptool', 'report_grouptool'));
-        if ( $isthere != false) {
+        if ($isthere != false) {
             $isthere->remove();
         }
         return;
     }
 
     $url = new moodle_url('/report/grouptool/index.php', ['id' => $course->id]);
-    $node = navigation_node::create(get_string('pluginname', 'report_grouptool'), $url, navigation_node::TYPE_SETTING,
-        null, null, new pix_icon('i/report', get_string('grouptool', 'report_grouptool')));
+    $node = navigation_node::create(
+        get_string('pluginname', 'report_grouptool'),
+        $url,
+        navigation_node::TYPE_SETTING,
+        null,
+        null,
+        new pix_icon('i/report', get_string('grouptool', 'report_grouptool'))
+    );
     $navigation->add_node($node);
-
 }
 
 /**
