@@ -55,26 +55,6 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
-
-    'report/grouptool:view_regs_group_view' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => [
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-    ],
-
-    'report/grouptool:view_regs_course_view' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => [
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-    ],
     'report/grouptool:register' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -83,3 +63,13 @@ $capabilities = [
         ],
     ],
 ];
+
+$deprecatedcapabilities = [
+    'report/grouptool:view_regs_group_view' => [
+        'message' => 'This was deprecated in Moodle 5.1! ',
+    ],
+    'report/grouptool:view_regs_course_view' => [
+        'message' => 'This was deprecated in Moodle 5.1! ',
+    ],
+];
+
