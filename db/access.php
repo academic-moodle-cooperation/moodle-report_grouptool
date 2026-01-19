@@ -72,4 +72,3 @@ $deprecatedcapabilities = [
         'message' => 'This was deprecated in Moodle 5.1! ',
     ],
 ];
-
