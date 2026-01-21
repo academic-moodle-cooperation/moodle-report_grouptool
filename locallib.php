@@ -409,12 +409,12 @@ class report_grouptool {
         $cachereport = $this->cache->get($id);
         if (!isset($cachereport->userlist)) {
             $cachereport->userlist = new stdClass();
-            $this->cache->set($id,$cachereport);
+            $this->cache->set($id, $cachereport);
         }
         // Handles order direction!
         if (!isset($cachereport->userlist->orderby)) {
             $cachereport->userlist->orderby = [];
-            $this->cache->set($id,$cachereport);
+            $this->cache->set($id, $cachereport);
         }
         $orderby = $cachereport->userlist->orderby;
         if ($tsort = optional_param('tsort' . $this->grouptool->id, 0, PARAM_ALPHANUM)) {
@@ -439,13 +439,13 @@ class report_grouptool {
             array_unshift($oldorderdir, (($olddir == 'DESC') ? 'ASC' : 'DESC'));
             $orderby = array_combine($oldorderby, $oldorderdir);
             $cachereport->userlist->orderby = $orderby;
-            $this->cache->set($id,$cachereport);
+            $this->cache->set($id, $cachereport);
         }
 
         // Handles collapsed columns!
         if (!isset($cachereport->userlist->collapsed)) {
             $cachereport->userlist->collapsed = [];
-            $this->cache->set($id,$cachereport);
+            $this->cache->set($id, $cachereport);
         }
         $collapsed = $cachereport->userlist->collapsed;
         if ($thide = optional_param('thide' . $this->grouptool->id, 0, PARAM_ALPHANUM)) {
@@ -461,7 +461,7 @@ class report_grouptool {
                 }
             }
             $cachereport->userlist->collapsed = $collapsed;
-            $this->cache->set($id,$cachereport);
+            $this->cache->set($id, $cachereport);
         }
 
         $downloadurl = '';
@@ -555,13 +555,13 @@ class report_grouptool {
                 if (!isset($cachereport->format)) {
                     $cachereport->format = GROUPTOOL_TXT;
                     $format = GROUPTOOL_TXT;
-                    $this->cache->set($id,$cachereport);
+                    $this->cache->set($id, $cachereport);
                 } else {
                     $format = $cachereport->format;
                 }
             } else {
                 $cachereport->format = $format;
-                $this->cache->set($id,$cachereport);
+                $this->cache->set($id, $cachereport);
             }
             $url = new moodle_url($PAGE->url, [
                 'sesskey' => sesskey(),
