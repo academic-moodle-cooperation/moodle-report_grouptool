@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+5.1.0 (2026-01-21)
+------------------
+* Release for Moodle 5.1
+* [FIXED] #8492 Fix Risky session usage
+* [LANGSTRING] #8491 Added missing language strings
+* [FIXED] #8553 Fixed sorting in descending order not working
+
 5.0.0 (2025-07-23)
 ------------------
 * Release for Moodle 5.0
