@@ -42,6 +42,8 @@ class report_grouptool {
     protected $grouptool;
     /** @var object instance's context record */
     protected $context;
+    /** @var cache */
+    protected $cache;
 
     /**
      * filter all groups
@@ -130,11 +132,9 @@ class report_grouptool {
         $this->grouptool->course = $this->course->id;
 
         $id = $this->grouptool->id;
-        if (!isset($SESSION->report_grouptool)) {
-            $SESSION->report_grouptool = new stdClass();
-        }
-        if (!isset($SESSION->report_grouptool->$id)) {
-            $SESSION->report_grouptool->$id = new stdClass();
+        $this->cache = cache::make('report_grouptool', 'report');
+        if (!$this->cache->get($id)) {
+            $this->cache->set($id, new stdClass());
         }
     }
 
@@ -205,6 +205,7 @@ class report_grouptool {
      */
     protected function get_download_select($url) {
         global $SESSION;
+
         $options = null;
         if (!$options) {
             $options = [
@@ -216,15 +217,16 @@ class report_grouptool {
         }
         $param = optional_param('format' . $this->grouptool->id, null, PARAM_INT);
         $id = $this->grouptool->id;
+        $cachereport = $this->cache->get($id);
         if ($param === null) {
-            if (!isset($SESSION->report_grouptool->$id->format)) {
-                $SESSION->report_grouptool->$id->format = GROUPTOOL_TXT;
+            if (!isset($cachereport->format)) {
+                $cachereport->format = GROUPTOOL_TXT;
                 $param = GROUPTOOL_TXT;
             } else {
-                $param = $SESSION->report_grouptool->$id->format;
+                $param = $cachereport->format;
             }
         } else {
-            $SESSION->report_grouptool->$id->format = $param;
+            $cachereport->format = $param;
         }
         return new single_select($url, 'format' . $this->grouptool->id, $options, $param, false);
     }
@@ -404,14 +406,17 @@ class report_grouptool {
         global $OUTPUT, $CFG, $DB, $PAGE, $SESSION;
         $useridentityfields = self::get_useridentity_fields();
         $id = $this->grouptool->id;
-        if (!isset($SESSION->report_grouptool->$id->userlist)) {
-            $SESSION->report_grouptool->$id->userlist = new stdClass();
+        $cachereport = $this->cache->get($id);
+        if (!isset($cachereport->userlist)) {
+            $cachereport->userlist = new stdClass();
+            $this->cache->set($id,$cachereport);
         }
         // Handles order direction!
-        if (!isset($SESSION->report_grouptool->$id->userlist->orderby)) {
-            $SESSION->report_grouptool->$id->userlist->orderby = [];
+        if (!isset($cachereport->userlist->orderby)) {
+            $cachereport->userlist->orderby = [];
+            $this->cache->set($id,$cachereport);
         }
-        $orderby = $SESSION->report_grouptool->$id->userlist->orderby;
+        $orderby = $cachereport->userlist->orderby;
         if ($tsort = optional_param('tsort' . $this->grouptool->id, 0, PARAM_ALPHANUM)) {
             // SHOW RESET button
             if ($tsort != 'reset') {
@@ -433,19 +438,21 @@ class report_grouptool {
             array_unshift($oldorderby, $tsort);
             array_unshift($oldorderdir, (($olddir == 'DESC') ? 'ASC' : 'DESC'));
             $orderby = array_combine($oldorderby, $oldorderdir);
-            $SESSION->report_grouptool->$id->userlist->orderby = $orderby;
+            $cachereport->userlist->orderby = $orderby;
+            $this->cache->set($id,$cachereport);
         }
 
         // Handles collapsed columns!
-        if (!isset($SESSION->report_grouptool->$id->userlist->collapsed)) {
-            $SESSION->report_grouptool->$id->userlist->collapsed = [];
+        if (!isset($cachereport->userlist->collapsed)) {
+            $cachereport->userlist->collapsed = [];
+            $this->cache->set($id,$cachereport);
         }
-        $collapsed = $SESSION->report_grouptool->$id->userlist->collapsed;
+        $collapsed = $cachereport->userlist->collapsed;
         if ($thide = optional_param('thide' . $this->grouptool->id, 0, PARAM_ALPHANUM)) {
             if (!in_array($thide, $collapsed)) {
                 array_push($collapsed, $thide);
             }
-            $SESSION->report_grouptool->$id->userlist->collapsed = $collapsed;
+            $cachereport->userlist->collapsed = $collapsed;
         }
         if ($tshow = optional_param('tshow' . $this->grouptool->id, 0, PARAM_ALPHANUM)) {
             foreach ($collapsed as $key => $value) {
@@ -453,7 +460,8 @@ class report_grouptool {
                     unset($collapsed[$key]);
                 }
             }
-            $SESSION->report_grouptool->$id->userlist->collapsed = $collapsed;
+            $cachereport->userlist->collapsed = $collapsed;
+            $this->cache->set($id,$cachereport);
         }
 
         $downloadurl = '';
@@ -544,14 +552,16 @@ class report_grouptool {
         if (!$onlydata) {
             $format = optional_param('format' . $this->grouptool->id, null, PARAM_INT);
             if ($format === null) {
-                if (!isset($SESSION->report_grouptool->$id->format)) {
-                    $SESSION->report_grouptool->$id->format = GROUPTOOL_TXT;
+                if (!isset($cachereport->format)) {
+                    $cachereport->format = GROUPTOOL_TXT;
                     $format = GROUPTOOL_TXT;
+                    $this->cache->set($id,$cachereport);
                 } else {
-                    $format = $SESSION->report_grouptool->$id->format;
+                    $format = $cachereport->format;
                 }
             } else {
-                $SESSION->report_grouptool->$id->format = $format;
+                $cachereport->format = $format;
+                $this->cache->set($id,$cachereport);
             }
             $url = new moodle_url($PAGE->url, [
                 'sesskey' => sesskey(),
