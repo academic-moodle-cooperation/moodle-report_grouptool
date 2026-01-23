@@ -6,6 +6,7 @@ CHANGELOG
 * [FIXED] #8492 Fix Risky session usage
 * [LANGSTRING] #8491 Added missing language strings
 * [FIXED] #8553 Fixed sorting in descending order not working
+* [DEPRECATED] #8554 Removed redundant capabilities
 
 5.0.0 (2025-07-23)
 ------------------
