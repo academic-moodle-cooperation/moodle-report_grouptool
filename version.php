@@ -19,7 +19,7 @@
  *
  * @package       report_grouptool
  * @author        Anne Kreppenhofer (annek03@univie.ac.at)
- * @copyright     2024 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2026 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -29,4 +29,4 @@ $plugin->release = "v5.1.0";       // User-friendly version number.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2025100600;      // Requires this Moodle version!
 $plugin->component = 'report_grouptool';    // To check on upgrade, that module sits in correct place.
-$plugin->dependencies = ['mod_grouptool' => 2025012502]; // Requires this moodle version!
+$plugin->dependencies = ['mod_grouptool' => 2026012100]; // Requires this grouptool version.
