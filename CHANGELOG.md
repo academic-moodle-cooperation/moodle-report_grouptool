@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+5.2.0 (2026-08-03)
+------------------
+* Release for Moodle 5.2
+* [FEATURE] #8555 Unified filename generation for exported files
+* [FIXED] #8410 Added logging when the group management report is viewed
+* [FEATURE] #8557 Removed queue links from the group management report
+
 5.1.0 (2026-01-21)
 ------------------
 * Release for Moodle 5.1
