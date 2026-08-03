@@ -37,6 +37,7 @@ $string['download_txt'] = 'TXT';
 $string['download_xlsx'] = 'XLSX';
 $string['duedate'] = 'Anmeldeende';
 $string['duedateno'] = 'Keine Deadline';
+$string['eventreportviewed'] = 'Gruppenverwaltungs Bericht angesehen';
 $string['eventuserlistexported'] = 'Exportierte Teilnehmer/innenliste';
 $string['free'] = 'Frei';
 $string['group_not_in_grouping'] = 'Gewählte Gruppe ist nicht in gewählter Gruppierung!';
