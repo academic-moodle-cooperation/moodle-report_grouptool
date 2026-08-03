@@ -96,5 +96,5 @@ foreach ($grouptools as $grouptool) {
 echo $OUTPUT->footer();
 
 // Trigger a report viewed event.
-$event = \report_grouptool\event\report_viewed::create(array('context' => $coursecontext));
+$event = \report_grouptool\event\report_viewed::create(['context' => $coursecontext]);
 $event->trigger();
