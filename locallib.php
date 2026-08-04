@@ -743,10 +743,6 @@ class report_grouptool {
                         if (!empty($user->regs)) {
                             $registrations = [];
                             foreach ($user->regs as $reg) {
-                                $grouplink = new moodle_url($PAGE->url, [
-                                    'tab' => 'overview',
-                                    'groupid' => $groupinfo[$reg]->id,
-                                ]);
                                 $registrations[] = $groupinfo[$reg]->name;
                             }
                         } else {
@@ -761,10 +757,6 @@ class report_grouptool {
                         if (!empty($user->queued)) {
                             $queueentries = [];
                             foreach ($user->queued as $queue) {
-                                $grouplink = new moodle_url($PAGE->url, [
-                                    'tab' => 'overview',
-                                    'groupid' => $groupinfo[$queue]->id,
-                                ]);
                                 $groupdata = $this->get_active_groups(false, true, $queue);
                                 $groupdata = current($groupdata);
                                 $rank = $this->get_rank_in_queue($groupdata->queued, $user->id);
@@ -773,7 +765,8 @@ class report_grouptool {
                                 if (empty($rank)) {
                                     $rank = '*';
                                 }
-                                $queueentries[] = html_writer::link($grouplink, $groupinfo[$queue]->name . " (#" . $rank . ")");
+                                $queueentries[] = $groupinfo[$queue]->name .
+                                    ' (#' . $rank . ')';
                             }
                         } else {
                             $queueentries = ['-'];
